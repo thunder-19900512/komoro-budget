@@ -1,0 +1,156 @@
+[
+ {
+  "no": 1,
+  "kan": "議会費",
+  "amount": 186251,
+  "prev": 181559,
+  "kenkoku": 0,
+  "chihousai": 0,
+  "sonota": 0,
+  "ippan": 186251,
+  "group": "議会費"
+ },
+ {
+  "no": 2,
+  "kan": "総務費",
+  "amount": 2331772,
+  "prev": 2159684,
+  "kenkoku": 170073,
+  "chihousai": 8300,
+  "sonota": 151351,
+  "ippan": 2002048,
+  "group": "総務費"
+ },
+ {
+  "no": 3,
+  "kan": "民生費",
+  "amount": 7211982,
+  "prev": 6838320,
+  "kenkoku": 3303458,
+  "chihousai": 7600,
+  "sonota": 128019,
+  "ippan": 3772905,
+  "group": "民生費"
+ },
+ {
+  "no": 4,
+  "kan": "衛生費",
+  "amount": 3773752,
+  "prev": 3551026,
+  "kenkoku": 2229210,
+  "chihousai": 1200,
+  "sonota": 163597,
+  "ippan": 1379745,
+  "group": "衛生費"
+ },
+ {
+  "no": 5,
+  "kan": "労働費",
+  "amount": 71842,
+  "prev": 71845,
+  "kenkoku": 0,
+  "chihousai": 0,
+  "sonota": 70121,
+  "ippan": 1721,
+  "group": "その他の款"
+ },
+ {
+  "no": 6,
+  "kan": "農林水産業費",
+  "amount": 454367,
+  "prev": 502373,
+  "kenkoku": 86609,
+  "chihousai": 13700,
+  "sonota": 17481,
+  "ippan": 336577,
+  "group": "農林水産業費"
+ },
+ {
+  "no": 7,
+  "kan": "商工費",
+  "amount": 1062412,
+  "prev": 1412113,
+  "kenkoku": 18750,
+  "chihousai": 0,
+  "sonota": 637158,
+  "ippan": 406504,
+  "group": "商工費"
+ },
+ {
+  "no": 8,
+  "kan": "土木費",
+  "amount": 2291958,
+  "prev": 1923536,
+  "kenkoku": 357718,
+  "chihousai": 394600,
+  "sonota": 95481,
+  "ippan": 1444159,
+  "group": "土木費"
+ },
+ {
+  "no": 9,
+  "kan": "消防費",
+  "amount": 525288,
+  "prev": 517465,
+  "kenkoku": 0,
+  "chihousai": 0,
+  "sonota": 23548,
+  "ippan": 501740,
+  "group": "消防費"
+ },
+ {
+  "no": 10,
+  "kan": "教育費",
+  "amount": 3906327,
+  "prev": 1779321,
+  "kenkoku": 905677,
+  "chihousai": 906900,
+  "sonota": 538632,
+  "ippan": 1555118,
+  "group": "教育費"
+ },
+ {
+  "no": 11,
+  "kan": "災害復旧費",
+  "amount": 100,
+  "prev": 100,
+  "kenkoku": 0,
+  "chihousai": 0,
+  "sonota": 0,
+  "ippan": 100,
+  "group": "その他の款"
+ },
+ {
+  "no": 12,
+  "kan": "公債費",
+  "amount": 1824819,
+  "prev": 1875858,
+  "kenkoku": 0,
+  "chihousai": 0,
+  "sonota": 0,
+  "ippan": 1824819,
+  "group": "公債費"
+ },
+ {
+  "no": 13,
+  "kan": "諸支出金",
+  "amount": 20932,
+  "prev": 20932,
+  "kenkoku": 0,
+  "chihousai": 0,
+  "sonota": 0,
+  "ippan": 20932,
+  "group": "その他の款"
+ },
+ {
+  "no": 14,
+  "kan": "予備費",
+  "amount": 38198,
+  "prev": 35868,
+  "kenkoku": 0,
+  "chihousai": 0,
+  "sonota": 0,
+  "ippan": 38198,
+  "group": "その他の款"
+ }
+]
