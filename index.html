@@ -3,41 +3,162 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>まるわかり 小諸市予算（令和8年度・非公式）</title>
+<title>まる見え 小諸市予算（令和8年度・β版・非公式）</title>
 <meta name="description" content="小諸市の令和8年度一般会計当初予算（237億円）が、どこから入り何に使われるかを図で見られる非公式ページ。数字は小諸市の公開資料（当初予算書）から作成。">
-<meta property="og:title" content="まるわかり 小諸市予算（令和8年度・非公式）">
+<meta property="og:title" content="まる見え 小諸市予算（令和8年度・β版・非公式）">
 <meta property="og:description" content="小諸市の公開資料から個人が作成した非公式ページです。">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<meta name="theme-color" content="#2aa693">
 <style>
+/*
+ * デザイン：チームみらい デザインシステム v0.3（Webアプリ向け）のトークンに合わせています。
+ * 単一HTML・Tailwind なしの構成なので、SKILL.md §13 の例外と同じく「トークン名と意味だけ揃える」方針。
+ * レイアウトは references/11-page-templates.md §2「ダッシュボード（marumie 風）」がベース。
+ */
 :root {
   color-scheme: light;
-  --color-fg: #1f2328; --color-fg-muted: #5c6670; --color-bg: #ffffff; --color-panel: #f7f7f5; --color-border-line: #e2e2dc;
-  --color-ok: #1f7a46; --color-warn: #b7791f; --color-bad: #b4402f;
-  --km-c0: #2f6fb0; --km-c1: #d08a2e; --km-c2: #8a5aa6; --km-c3: #5f8f6b;
-  --cds-chart-muted: #c3c7c9; --cds-chart-axis: #9aa1a6; --cds-surface-popover: #ffffff; --cds-border: #d7d7d0; --cds-text-secondary: #5c6670;
-  --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.12);
-  --font-anthropic-sans: system-ui, -apple-system, "Segoe UI";
-  --font-anthropic-serif: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
-  --cds-font-size-caption: 13px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
-  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px;
-  --cds-radius: 8px; --cds-dur-slow: .3s;
+  /* --- チームみらい トークン（SKILL.md §5） --- */
+  --mirai-primary: #2aa693;
+  --mirai-primary-accent: #0f8472;
+  --mirai-gradient: linear-gradient(to bottom right, #64d8c6, #bcecd3);
+  --mirai-bg-dashboard: linear-gradient(135deg, #e2f6f3 0%, #eef6e2 100%); /* marumie の --background */
+  --mirai-card: #ffffff;
+  --mirai-text: #1f2937;
+  --mirai-text-muted: #6b7280; /* marumie text-muted。#8E8E93 は白背景で小さい文字のコントラストが足りないため */
+  --mirai-border: #d2d2d2;
+  --mirai-surface: #f7f4ee; /* warm gray */
+  --mirai-highlight: #f4ff5f;
+  --mirai-danger: #dc2626;
+  --mirai-focus: rgba(42, 166, 147, 0.4);
+  /* --- 財源区分の色（サンキー図・凡例・内訳バー） --- */
+  --km-c0: #2aa693; /* 一般財源：ブランドのティール */
+  --km-c1: #4f566b; /* 国・県の補助金など：marumie の TOTAL 色 */
+  --km-c2: #dc2626; /* 市債：marumie の支出色 */
+  --km-c3: #9ca3af; /* その他の特定財源 */
+  /* --- 描画スクリプトが参照する名前（中身は上のトークン） --- */
+  --km-font: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  --color-fg: var(--mirai-text);
+  --color-fg-muted: var(--mirai-text-muted);
+  --color-ok: var(--mirai-primary-accent);
+  --color-bad: var(--mirai-danger);
+  --cds-chart-muted: #d1d5db;
+  --cds-chart-axis: #9ca3af;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  color-scheme: dark;
-  --color-fg: #e8e8e3; --color-fg-muted: #a3aaa8; --color-bg: #161817; --color-panel: #1f2220; --color-border-line: #333835;
-  --color-ok: #6fcf97; --color-warn: #e0b45a; --color-bad: #ef8a7a;
-  --km-c0: #6fa6e0; --km-c1: #e6a65a; --km-c2: #b48ad0; --km-c3: #8cbf98;
-  --cds-chart-muted: #4b524f; --cds-chart-axis: #6c7470; --cds-surface-popover: #262a28; --cds-border: #3a403c; --cds-text-secondary: #a3aaa8;
-  --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
-} }
-html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
-#dash-root { box-sizing: border-box; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(32px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+html { scroll-padding-top: 96px; }
+body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); color: var(--mirai-text); font-family: var(--km-font); -webkit-font-smoothing: antialiased; }
+#dash-root { box-sizing: border-box; padding: 0 0 env(safe-area-inset-bottom, 0px); }
 #dash-root *, #dash-root *::before, #dash-root *::after { box-sizing: border-box; }
-.dash-select { font: inherit; font-size: 14px; padding: 0 28px 0 10px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background-color: var(--color-bg); color: var(--color-fg); }
-.km-foot a { color: inherit; }
-.km-foot { max-width: 82rem; margin: 32px auto 0; padding-top: 12px; border-top: 1px solid var(--color-border-line); font-size: 13px; color: var(--color-fg-muted); }
+.km { font-size: 15px; line-height: 1.875; font-weight: 400; max-width: 72rem; margin: 0 auto; padding: 0 16px 48px; }
+.km a { color: var(--mirai-primary-accent); text-underline-offset: 3px; }
+.km :focus-visible { outline: 2px solid var(--mirai-focus); outline-offset: 2px; border-radius: 6px; }
+
+/* 固定ヘッダー（11-page-templates §6：白い rounded box の浮島） */
+.km-top { position: sticky; top: 0; z-index: 40; padding: max(12px, env(safe-area-inset-top, 0px)) 0 12px; }
+.km-top-inner { background: var(--mirai-card); border-radius: 20px; padding: 10px 16px; display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap; }
+.km-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; color: var(--mirai-text); white-space: nowrap; }
+.km-badge { display: inline-flex; align-items: center; padding: 0 10px; font-size: 12px; font-weight: 500; line-height: 22px; color: var(--mirai-text); background: var(--mirai-highlight); border-radius: 20px; }
+.km-tabs { display: flex; gap: 6px; flex-wrap: nowrap; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+.km-tabs::-webkit-scrollbar { display: none; }
+.km-tab { white-space: nowrap; flex: none; }
+@media (max-width: 40rem) { .km-top-inner { padding: 10px 12px; gap: 8px; } .km-tabs { margin: 0 -4px; width: calc(100% + 8px); } }
+.km-tab { font: inherit; font-size: 14px; font-weight: 700; color: var(--mirai-text); background: transparent; border: 1px solid transparent; border-radius: 999px; padding: 4px 14px; cursor: pointer; transition: background-color .2s, border-color .2s; }
+.km-tab:hover { background: var(--mirai-surface); }
+.km-tab[aria-selected="true"] { background: var(--mirai-gradient); border-color: #000; }
+
+/* ページヘッダー（ダッシュボードは Hero なし：タイトル + メタ） */
+.km-head { padding: 24px 4px 20px; }
+.km h1 { font-size: 28px; line-height: 1.4; font-weight: 700; letter-spacing: normal; margin: 0 0 4px; }
+.km-meta { font-size: 14px; font-weight: 500; color: var(--mirai-text-muted); margin: 0; }
+.km-lead { margin: 12px 0 16px; max-width: 52rem; font-weight: 500; }
+.km .km-lead b, .km .km-num b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.km-disclaimer { background: var(--mirai-card); border: 1px solid var(--mirai-border); border-radius: 16px; padding: 12px 16px; font-size: 13px; line-height: 1.8; color: var(--mirai-text-muted); }
+.km-disclaimer strong { color: var(--mirai-text); font-weight: 700; }
+
+.km h2 { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 6px; }
+.km-note { font-size: 13px; line-height: 1.8; color: var(--mirai-text-muted); font-weight: 500; margin: 0 0 12px; }
+
+/* カード（marumie の MainColumnCard：白 + rounded 24px + 厚めの余白、影なし） */
+.km-card { background: var(--mirai-card); border-radius: 24px; padding: 28px 18px; min-width: 0; }
+@media (min-width: 640px) { .km-card { padding: 32px; } }
+.km-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 16px; margin-bottom: 16px; }
+.km-stat { padding: 24px; }
+.km-stat .k { font-size: 14px; font-weight: 500; color: var(--mirai-text-muted); }
+.km-stat .v { font-size: 30px; font-weight: 700; line-height: 1.3; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.km-stat .v small { font-size: 15px; font-weight: 700; margin-left: 2px; }
+.km-stat .s { font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); }
+@media (max-width: 40rem) { .km-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .km-stat { padding: 16px; border-radius: 20px; } .km-stat .k { font-size: 12px; line-height: 1.6; } .km-stat .v { font-size: 24px; } .km-stat .s { font-size: 12px; line-height: 1.6; } }
+
+.km-flowgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem); gap: 16px; align-items: start; margin-bottom: 16px; }
+@media (max-width: 62rem) { .km-flowgrid { grid-template-columns: minmax(0, 1fr); } }
+.km-scroll { overflow-x: auto; }
+.km-sankey { position: relative; min-height: 560px; width: 100%; }
+.km-sankey svg { display: block; max-width: none; }
+.km-swipe { display: none; font-size: 12px; font-weight: 500; color: var(--mirai-text-muted); margin: 0 0 6px; }
+@media (max-width: 44rem) { .km-swipe { display: block; } }
+.km-sankey .node { cursor: pointer; }
+.km-sankey .node:focus-visible { outline: none; }
+.km-sankey .node:focus-visible rect { stroke: var(--mirai-text); stroke-width: 2px; }
+.km-sankey .lbl { font-size: 12px; font-weight: 500; fill: var(--mirai-text); font-family: var(--km-font); }
+.km-sankey .lbl .amt { fill: var(--mirai-text-muted); font-weight: 400; }
+.km-sankey .mid { paint-order: stroke; stroke: var(--mirai-card); stroke-width: 4px; stroke-linejoin: round; font-weight: 700; }
+.km-sankey .link { transition: fill-opacity .2s; }
+.km-tip { position: absolute; pointer-events: none; background: var(--mirai-card); border: 1px solid var(--mirai-border); border-radius: 12px; box-shadow: 0 2px 8px rgba(31, 41, 55, .08); padding: 6px 10px; font-size: 13px; line-height: 1.6; max-width: 16rem; z-index: 2; }
+.km-tip .t { color: var(--mirai-text-muted); }
+.km-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); margin-top: 12px; }
+.km-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+.km-legend .dash { display: inline-block; width: 16px; border-top: 2px dashed var(--mirai-text-muted); margin-right: 6px; vertical-align: 4px; }
+
+/* セカンダリボタン：白ピル + 黒 1px ボーダー（Button variant="outline"） */
+.km-btn { font: inherit; font-size: 13px; font-weight: 700; background: var(--mirai-card); color: var(--mirai-text); border: 1px solid #000; border-radius: 999px; padding: 4px 16px; cursor: pointer; transition: background-color .2s; }
+.km-btn:hover { background: var(--mirai-surface); }
+
+.km-panel { position: sticky; top: 88px; max-height: calc(100vh - 104px); overflow: auto; }
+.km-panel .eyebrow { font-size: 12px; font-weight: 700; color: var(--mirai-primary-accent); }
+.km-panel h2 { margin-bottom: 0; }
+.km-panel .big { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.4; }
+.km-panel h3 { font-size: 15px; font-weight: 700; margin: 20px 0 6px; }
+.km-panel p { margin: 6px 0; font-size: 14px; }
+.km-rows { list-style: none; margin: 0; padding: 0; }
+.km-rows li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 6px 0; border-bottom: 1px solid #ececec; font-size: 13px; line-height: 1.6; }
+.km-rows li .n { overflow-wrap: anywhere; }
+.km-rows li .a { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; font-weight: 500; }
+.km-rows li .bar { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--cds-chart-muted); }
+.km-stack { display: flex; height: 12px; border-radius: 999px; overflow: hidden; margin: 6px 0; }
+.km-up { color: var(--mirai-primary-accent); font-weight: 700; } .km-down { color: var(--mirai-danger); font-weight: 700; }
+
+.km-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 16px; }
+.km-diff { position: relative; width: 100%; min-height: 200px; }
+.km-diff text { font-size: 12px; font-weight: 500; fill: var(--mirai-text); font-family: var(--km-font); }
+.km-diff .muted { fill: var(--mirai-text-muted); }
+
+.km-ptools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.km-ptools input, .km-ptools select { font: inherit; font-size: 14px; height: 36px; padding: 0 12px; border: 1px solid var(--mirai-border); border-radius: 999px; background: var(--mirai-card); color: var(--mirai-text); }
+.km-ptools input { min-width: min(100%, 20rem); }
+.km-count { font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); }
+.km-tablebox { max-height: 70vh; overflow: auto; border: 1px solid var(--mirai-border); border-radius: 16px; }
+.km-table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.6; }
+.km-table th { position: sticky; top: 0; background: var(--mirai-surface); text-align: left; border-bottom: 1px solid var(--mirai-border); padding: 0; z-index: 1; }
+.km-table th button { font: inherit; font-weight: 700; background: none; border: 0; color: var(--mirai-text); padding: 8px 12px; cursor: pointer; width: 100%; text-align: inherit; }
+.km-table td { padding: 8px 12px; border-bottom: 1px solid #ececec; vertical-align: top; }
+.km-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.km-table td.num .cb { height: 3px; border-radius: 2px; background: var(--mirai-primary); opacity: .45; margin-top: 4px; margin-left: auto; }
+@media (max-width: 40rem) { .km-table .hide-narrow { display: none; } }
+
+.km-about { max-width: 48rem; }
+.km-about h2 { margin-top: 28px; }
+.km-about h2:first-child { margin-top: 0; }
+.km-about dt { font-weight: 700; margin-top: 10px; }
+.km-about dd { margin: 0 0 0 1em; }
+.km-about li { margin-bottom: 6px; }
+
+/* フッター（SKILL.md §7：dark gray + 白文字） */
+.km-foot { background: var(--mirai-text); color: #fff; font-size: 13px; line-height: 1.8; padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+.km-foot > div { max-width: 72rem; margin: 0 auto; }
+.km-foot a { color: #fff; }
 </style>
 <script src="vendor/d3.min.js"></script>
 <script>
@@ -69,94 +190,25 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
 <body>
 <div id="dash-root">
 <script>dash._load({"rev_kan": [{"no": 1, "kan": "市税", "amount": 5222285, "prev": 5200193, "group": "市税"}, {"no": 2, "kan": "地方譲与税", "amount": 210000, "prev": 217237, "group": "譲与税・各種交付金"}, {"no": 3, "kan": "利子割交付金", "amount": 7000, "prev": 2000, "group": "譲与税・各種交付金"}, {"no": 4, "kan": "配当割交付金", "amount": 20000, "prev": 20000, "group": "譲与税・各種交付金"}, {"no": 5, "kan": "株式等譲渡所得割交付金", "amount": 20000, "prev": 10000, "group": "譲与税・各種交付金"}, {"no": 6, "kan": "法人事業税交付金", "amount": 90000, "prev": 90000, "group": "譲与税・各種交付金"}, {"no": 7, "kan": "地方消費税交付金", "amount": 1000000, "prev": 1000000, "group": "地方消費税交付金"}, {"no": 8, "kan": "ゴルフ場利用税交付金", "amount": 7000, "prev": 7000, "group": "譲与税・各種交付金"}, {"no": 9, "kan": "地方特例交付金", "amount": 67469, "prev": 30978, "group": "譲与税・各種交付金"}, {"no": 10, "kan": "地方交付税", "amount": 4750000, "prev": 4350000, "group": "地方交付税"}, {"no": 11, "kan": "交通安全対策特別交付金", "amount": 3000, "prev": 3000, "group": "譲与税・各種交付金"}, {"no": 12, "kan": "分担金及び負担金", "amount": 104355, "prev": 95677, "group": "その他の収入"}, {"no": 13, "kan": "使用料及び手数料", "amount": 261199, "prev": 238493, "group": "その他の収入"}, {"no": 14, "kan": "国庫支出金", "amount": 5747253, "prev": 4626703, "group": "国庫支出金"}, {"no": 15, "kan": "県支出金", "amount": 1330142, "prev": 1204047, "group": "県支出金"}, {"no": 16, "kan": "財産収入", "amount": 94608, "prev": 73342, "group": "その他の収入"}, {"no": 17, "kan": "寄附金", "amount": 421020, "prev": 439020, "group": "その他の収入"}, {"no": 18, "kan": "繰入金", "amount": 1920354, "prev": 1785942, "group": "基金の取り崩しなど"}, {"no": 19, "kan": "繰越金", "amount": 200000, "prev": 200000, "group": "その他の収入"}, {"no": 20, "kan": "諸収入", "amount": 892015, "prev": 845668, "group": "その他の収入"}, {"no": 21, "kan": "市債", "amount": 1332300, "prev": 412700, "group": "市債"}, {"no": 99, "kan": "環境性能割交付金（廃款）", "amount": 0, "prev": 18000, "group": "譲与税・各種交付金"}], "rev_kou": [{"kan": "市税", "kou": "市民税", "amount": 2215195}, {"kan": "市税", "kou": "固定資産税", "amount": 2215605}, {"kan": "市税", "kou": "軽自動車税", "amount": 186000}, {"kan": "市税", "kou": "市たばこ税", "amount": 319385}, {"kan": "市税", "kou": "入湯税", "amount": 14000}, {"kan": "市税", "kou": "都市計画税", "amount": 272100}, {"kan": "地方譲与税", "kou": "自動車重量譲与税", "amount": 150000}, {"kan": "地方譲与税", "kou": "地方揮発油譲与税", "amount": 43000}, {"kan": "地方譲与税", "kou": "森林環境譲与税", "amount": 17000}, {"kan": "利子割交付金", "kou": "利子割交付金", "amount": 7000}, {"kan": "配当割交付金", "kou": "配当割交付金", "amount": 20000}, {"kan": "株式等譲渡所得割交付金", "kou": "株式等譲渡所得割交付金", "amount": 20000}, {"kan": "法人事業税交付金", "kou": "法人事業税交付金", "amount": 90000}, {"kan": "地方消費税交付金", "kou": "地方消費税交付金", "amount": 1000000}, {"kan": "ゴルフ場利用税交付金", "kou": "ゴルフ場利用税交付金", "amount": 7000}, {"kan": "地方特例交付金", "kou": "地方特例交付金", "amount": 67000}, {"kan": "地方特例交付金", "kou": "新型コロナウイルス感染症対策地方税減収補填特別交付金", "amount": 469}, {"kan": "地方交付税", "kou": "地方交付税", "amount": 4750000}, {"kan": "交通安全対策特別交付金", "kou": "交通安全対策特別交付金", "amount": 3000}, {"kan": "分担金及び負担金", "kou": "負担金", "amount": 104355}, {"kan": "使用料及び手数料", "kou": "使用料", "amount": 136240}, {"kan": "使用料及び手数料", "kou": "手数料", "amount": 124959}, {"kan": "国庫支出金", "kou": "国庫負担金", "amount": 2259427}, {"kan": "国庫支出金", "kou": "国庫補助金", "amount": 3466661}, {"kan": "国庫支出金", "kou": "委託金", "amount": 21165}, {"kan": "県支出金", "kou": "県負担金", "amount": 807620}, {"kan": "県支出金", "kou": "県補助金", "amount": 412843}, {"kan": "県支出金", "kou": "委託金", "amount": 109679}, {"kan": "財産収入", "kou": "財産運用収入", "amount": 92323}, {"kan": "財産収入", "kou": "財産売払収入", "amount": 2285}, {"kan": "寄附金", "kou": "寄附金", "amount": 421020}, {"kan": "繰入金", "kou": "特別会計繰入金", "amount": 3168}, {"kan": "繰入金", "kou": "基金繰入金", "amount": 1917186}, {"kan": "繰越金", "kou": "繰越金", "amount": 200000}, {"kan": "諸収入", "kou": "延滞金・加算金及び過料", "amount": 5000}, {"kan": "諸収入", "kou": "市預金利子", "amount": 10}, {"kan": "諸収入", "kou": "貸付金元利収入", "amount": 629320}, {"kan": "諸収入", "kou": "受託事業収入", "amount": 31378}, {"kan": "諸収入", "kou": "雑入", "amount": 226307}, {"kan": "市債", "kou": "市債", "amount": 1332300}], "rev_kikin": [{"fund": "財政調整基金", "amount": 1429000, "prev": 1388000}, {"fund": "学校建設準備基金", "amount": 400000, "prev": 0}, {"fund": "地域振興基金", "amount": 80506, "prev": 86829}, {"fund": "森林環境整備基金", "amount": 5280, "prev": 500}, {"fund": "地域福祉基金", "amount": 1400, "prev": 1800}, {"fund": "環境衛生基金", "amount": 1000, "prev": 1000}, {"fund": "減債基金", "amount": 0, "prev": 300000}, {"fund": "特別会計からの繰入金", "amount": 3168, "prev": null}], "exp_kan": [{"no": 1, "kan": "議会費", "amount": 186251, "prev": 181559, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 186251, "group": "議会費"}, {"no": 2, "kan": "総務費", "amount": 2331772, "prev": 2159684, "kenkoku": 170073, "chihousai": 8300, "sonota": 151351, "ippan": 2002048, "group": "総務費"}, {"no": 3, "kan": "民生費", "amount": 7211982, "prev": 6838320, "kenkoku": 3303458, "chihousai": 7600, "sonota": 128019, "ippan": 3772905, "group": "民生費"}, {"no": 4, "kan": "衛生費", "amount": 3773752, "prev": 3551026, "kenkoku": 2229210, "chihousai": 1200, "sonota": 163597, "ippan": 1379745, "group": "衛生費"}, {"no": 5, "kan": "労働費", "amount": 71842, "prev": 71845, "kenkoku": 0, "chihousai": 0, "sonota": 70121, "ippan": 1721, "group": "その他の款"}, {"no": 6, "kan": "農林水産業費", "amount": 454367, "prev": 502373, "kenkoku": 86609, "chihousai": 13700, "sonota": 17481, "ippan": 336577, "group": "農林水産業費"}, {"no": 7, "kan": "商工費", "amount": 1062412, "prev": 1412113, "kenkoku": 18750, "chihousai": 0, "sonota": 637158, "ippan": 406504, "group": "商工費"}, {"no": 8, "kan": "土木費", "amount": 2291958, "prev": 1923536, "kenkoku": 357718, "chihousai": 394600, "sonota": 95481, "ippan": 1444159, "group": "土木費"}, {"no": 9, "kan": "消防費", "amount": 525288, "prev": 517465, "kenkoku": 0, "chihousai": 0, "sonota": 23548, "ippan": 501740, "group": "消防費"}, {"no": 10, "kan": "教育費", "amount": 3906327, "prev": 1779321, "kenkoku": 905677, "chihousai": 906900, "sonota": 538632, "ippan": 1555118, "group": "教育費"}, {"no": 11, "kan": "災害復旧費", "amount": 100, "prev": 100, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 100, "group": "その他の款"}, {"no": 12, "kan": "公債費", "amount": 1824819, "prev": 1875858, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 1824819, "group": "公債費"}, {"no": 13, "kan": "諸支出金", "amount": 20932, "prev": 20932, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 20932, "group": "その他の款"}, {"no": 14, "kan": "予備費", "amount": 38198, "prev": 35868, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 38198, "group": "その他の款"}], "exp_kou": [{"kan": "議会費", "kou": "議会費", "amount": 186251}, {"kan": "総務費", "kou": "総務管理費", "amount": 1779097}, {"kan": "総務費", "kou": "徴税費", "amount": 292575}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "amount": 155767}, {"kan": "総務費", "kou": "選挙費", "amount": 95420}, {"kan": "総務費", "kou": "統計調査費", "amount": 3314}, {"kan": "総務費", "kou": "監査委員費", "amount": 2175}, {"kan": "総務費", "kou": "交通安全費", "amount": 3424}, {"kan": "民生費", "kou": "社会福祉費", "amount": 1822834}, {"kan": "民生費", "kou": "高齢福祉費", "amount": 1607938}, {"kan": "民生費", "kou": "児童福祉費", "amount": 3207957}, {"kan": "民生費", "kou": "生活保護費", "amount": 534575}, {"kan": "民生費", "kou": "災害救助費", "amount": 200}, {"kan": "民生費", "kou": "人権政策費", "amount": 38478}, {"kan": "衛生費", "kou": "保健衛生費", "amount": 2742994}, {"kan": "衛生費", "kou": "清掃費", "amount": 1030758}, {"kan": "労働費", "kou": "労働費", "amount": 71842}, {"kan": "農林水産業費", "kou": "農業費", "amount": 396037}, {"kan": "農林水産業費", "kou": "林業費", "amount": 58330}, {"kan": "商工費", "kou": "商工費", "amount": 1062412}, {"kan": "土木費", "kou": "土木管理費", "amount": 234283}, {"kan": "土木費", "kou": "道路橋梁費", "amount": 942931}, {"kan": "土木費", "kou": "都市計画費", "amount": 1016223}, {"kan": "土木費", "kou": "住宅費", "amount": 98521}, {"kan": "消防費", "kou": "消防費", "amount": 525288}, {"kan": "教育費", "kou": "教育総務費", "amount": 2144268}, {"kan": "教育費", "kou": "小学校費", "amount": 614067}, {"kan": "教育費", "kou": "中学校費", "amount": 238121}, {"kan": "教育費", "kou": "人権同和教育費", "amount": 2644}, {"kan": "教育費", "kou": "社会教育費", "amount": 552305}, {"kan": "教育費", "kou": "保健体育費", "amount": 354922}, {"kan": "災害復旧費", "kou": "農林水産施設災害復旧費", "amount": 50}, {"kan": "災害復旧費", "kou": "公共土木施設災害復旧費", "amount": 50}, {"kan": "公債費", "kou": "公債費", "amount": 1824819}, {"kan": "諸支出金", "kou": "公営企業費", "amount": 20932}, {"kan": "予備費", "kou": "予備費", "amount": 38198}], "projects": [{"kan": "衛生費", "kou": "保健衛生費", "name": "脱炭素先行地域づくり事業", "amount": 2192827, "page": 100, "id": "P001"}, {"kan": "教育費", "kou": "教育総務費", "name": "学校再編事業", "amount": 1835857, "page": 148, "id": "P002"}, {"kan": "公債費", "kou": "公債費", "name": "元金", "amount": 1756382, "page": 180, "id": "P003"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子ども・子育て支援事業", "amount": 1166167, "page": 80, "id": "P004"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者総合支援給付事業", "amount": 1005357, "page": 69, "id": "P005"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童手当", "amount": 825900, "page": 76, "id": "P006"}, {"kan": "総務費", "kou": "総務管理費", "name": "一般管理費人件費", "amount": 695647, "page": 35, "id": "P007"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "介護保険事業特別会計繰出金", "amount": 654673, "page": 74, "id": "P008"}, {"kan": "民生費", "kou": "児童福祉費", "name": "保育所費人件費", "amount": 576254, "page": 80, "id": "P009"}, {"kan": "商工費", "kou": "商工費", "name": "制度融資事業", "amount": 575020, "page": 119, "id": "P010"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "後期高齢者医療広域連合負担金", "amount": 533500, "page": 75, "id": "P011"}, {"kan": "衛生費", "kou": "清掃費", "name": "浅麓環境施設組合運営費分担金", "amount": 485885, "page": 103, "id": "P012"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護等扶助費", "amount": 454656, "page": 89, "id": "P013"}, {"kan": "消防費", "kou": "消防費", "name": "佐久広域連合負担金", "amount": 434703, "page": 142, "id": "P014"}, {"kan": "土木費", "kou": "都市計画費", "name": "公共下水道事業会計繰出金", "amount": 404439, "page": 136, "id": "P015"}, {"kan": "衛生費", "kou": "清掃費", "name": "クリーンヒルこもろ運営事業", "amount": 331645, "page": 105, "id": "P016"}, {"kan": "民生費", "kou": "社会福祉費", "name": "国民健康保険事業特別会計繰出金", "amount": 300772, "page": 66, "id": "P017"}, {"kan": "総務費", "kou": "総務管理費", "name": "ふるさとＰＲ事業", "amount": 292003, "page": 41, "id": "P018"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者福祉医療等給付事業", "amount": 269205, "page": 68, "id": "P019"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "道路メンテナンス事業（老朽化道路インフラ）", "amount": 254000, "page": 132, "id": "P020"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校管理費人件費", "amount": 247259, "page": 152, "id": "P021"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市単道路等整備事業", "amount": 246730, "page": 131, "id": "P022"}, {"kan": "教育費", "kou": "保健体育費", "name": "総合体育館等運営事業", "amount": 222202, "page": 178, "id": "P023"}, {"kan": "民生費", "kou": "児童福祉費", "name": "ひとり親福祉事業", "amount": 211955, "page": 77, "id": "P024"}, {"kan": "教育費", "kou": "社会教育費", "name": "旧小諸本陣建造物保存修理事業", "amount": 205443, "page": 164, "id": "P025"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "後期高齢者医療特別会計繰出金", "amount": 191675, "page": 75, "id": "P026"}, {"kan": "総務費", "kou": "徴税費", "name": "税務総務費人件費", "amount": 183442, "page": 49, "id": "P027"}, {"kan": "民生費", "kou": "児童福祉費", "name": "保育所運営事業", "amount": 174660, "page": 78, "id": "P028"}, {"kan": "総務費", "kou": "総務管理費", "name": "庁舎等管理費", "amount": 168521, "page": 36, "id": "P029"}, {"kan": "土木費", "kou": "土木管理費", "name": "土木総務費人件費", "amount": 163496, "page": 127, "id": "P030"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校給食運営事業", "amount": 148751, "page": 154, "id": "P031"}, {"kan": "衛生費", "kou": "清掃費", "name": "収集運搬運営事業", "amount": 148521, "page": 103, "id": "P032"}, {"kan": "教育費", "kou": "社会教育費", "name": "社会教育総務費人件費", "amount": 144263, "page": 161, "id": "P033"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "予防接種事業", "amount": 132792, "page": 95, "id": "P034"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "保健衛生総務費人件費", "amount": 131702, "page": 94, "id": "P035"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業総務費人件費", "amount": 130074, "page": 108, "id": "P036"}, {"kan": "土木費", "kou": "都市計画費", "name": "中心拠点形成促進事業", "amount": 129111, "page": 136, "id": "P037"}, {"kan": "商工費", "kou": "商工費", "name": "産業団地整備事業特別会計繰出金", "amount": 128239, "page": 121, "id": "P038"}, {"kan": "議会費", "kou": "議会費", "name": "議員報酬等", "amount": 126494, "page": 33, "id": "P039"}, {"kan": "総務費", "kou": "総務管理費", "name": "住民情報システム運用事業", "amount": 119202, "page": 46, "id": "P040"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校管理費運営費", "amount": 118411, "page": 151, "id": "P041"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "都市構造再編集中支援事業（中央西地区）", "amount": 117000, "page": 132, "id": "P042"}, {"kan": "総務費", "kou": "徴税費", "name": "賦課徴収費運営費", "amount": 109133, "page": 50, "id": "P043"}, {"kan": "総務費", "kou": "総務管理費", "name": "庁内情報システム運用事業", "amount": 107817, "page": 47, "id": "P044"}, {"kan": "教育費", "kou": "教育総務費", "name": "事務局人件費", "amount": 107083, "page": 146, "id": "P045"}, {"kan": "商工費", "kou": "商工費", "name": "企業立地推進事業", "amount": 103509, "page": 121, "id": "P046"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童福祉総務費人件費", "amount": 99433, "page": 76, "id": "P047"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市道維持補修事業", "amount": 98391, "page": 129, "id": "P048"}, {"kan": "土木費", "kou": "都市計画費", "name": "公共交通事業", "amount": 97621, "page": 139, "id": "P049"}, {"kan": "土木費", "kou": "住宅費", "name": "住宅管理費運営費", "amount": 93909, "page": 140, "id": "P050"}, {"kan": "教育費", "kou": "教育総務費", "name": "教育支援費人件費", "amount": 88753, "page": 149, "id": "P051"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校管理費人件費", "amount": 88657, "page": 157, "id": "P052"}, {"kan": "土木費", "kou": "都市計画費", "name": "農業集落排水事業会計繰出金", "amount": 88293, "page": 136, "id": "P053"}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "name": "戸籍住民基本台帳費人件費", "amount": 87855, "page": 53, "id": "P054"}, {"kan": "消防費", "kou": "消防費", "name": "非常備消防費運営費", "amount": 87012, "page": 142, "id": "P055"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "高齢者保護支援費", "amount": 85287, "page": 72, "id": "P056"}, {"kan": "商工費", "kou": "商工費", "name": "商工総務費人件費", "amount": 84864, "page": 118, "id": "P057"}, {"kan": "民生費", "kou": "社会福祉費", "name": "社会福祉総務費人件費", "amount": 79901, "page": 63, "id": "P058"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市道除融雪事業", "amount": 74379, "page": 130, "id": "P059"}, {"kan": "土木費", "kou": "都市計画費", "name": "都市計画総務費人件費", "amount": 74093, "page": 134, "id": "P060"}, {"kan": "教育費", "kou": "社会教育費", "name": "図書館運営事業", "amount": 73368, "page": 164, "id": "P061"}, {"kan": "土木費", "kou": "都市計画費", "name": "交通政策費運営費", "amount": 72647, "page": 138, "id": "P062"}, {"kan": "労働費", "kou": "労働費", "name": "労働振興事業", "amount": 71842, "page": 105, "id": "P063"}, {"kan": "総務費", "kou": "総務管理費", "name": "各種団体連携事業", "amount": 70199, "page": 42, "id": "P064"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校管理費運営費", "amount": 70173, "page": 155, "id": "P065"}, {"kan": "公債費", "kou": "公債費", "name": "利子", "amount": 68437, "page": 180, "id": "P066"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "防災・安全社会資本整備交付金事業（舗装修繕）", "amount": 67000, "page": 132, "id": "P067"}, {"kan": "土木費", "kou": "土木管理費", "name": "国土地籍調査事業", "amount": 66619, "page": 128, "id": "P068"}, {"kan": "土木費", "kou": "都市計画費", "name": "都市公園維持管理事業", "amount": 64507, "page": 137, "id": "P069"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "妊産婦等支援事業", "amount": 63617, "page": 98, "id": "P070"}, {"kan": "総務費", "kou": "総務管理費", "name": "市民協働推進事業", "amount": 60451, "page": 40, "id": "P071"}, {"kan": "教育費", "kou": "保健体育費", "name": "国民スポーツ大会開催関係事業", "amount": 57953, "page": 177, "id": "P072"}, {"kan": "教育費", "kou": "教育総務費", "name": "学校運営費人件費", "amount": 56191, "page": 147, "id": "P073"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "健康診査事業", "amount": 55672, "page": 96, "id": "P074"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童施設運営事業", "amount": 55312, "page": 84, "id": "P075"}, {"kan": "農林水産業費", "kou": "農業費", "name": "中山間地域等直接支払事業", "amount": 54652, "page": 111, "id": "P076"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護総務費人件費", "amount": 53320, "page": 87, "id": "P077"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者地域生活支援事業", "amount": 53089, "page": 67, "id": "P078"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "高齢福祉総務費人件費", "amount": 52568, "page": 71, "id": "P079"}, {"kan": "商工費", "kou": "商工費", "name": "移住・定住促進事業", "amount": 47619, "page": 124, "id": "P080"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "高齢福祉総務費運営費", "amount": 46995, "page": 71, "id": "P081"}, {"kan": "教育費", "kou": "保健体育費", "name": "保健体育総務費人件費", "amount": 45750, "page": 176, "id": "P082"}, {"kan": "総務費", "kou": "総務管理費", "name": "車両管理費運営費", "amount": 44484, "page": 45, "id": "P083"}, {"kan": "総務費", "kou": "選挙費", "name": "市議会議員選挙運営費", "amount": 42768, "page": 59, "id": "P084"}, {"kan": "衛生費", "kou": "清掃費", "name": "清掃総務費人件費", "amount": 39883, "page": 102, "id": "P085"}, {"kan": "議会費", "kou": "議会費", "name": "議会事務局人件費", "amount": 39753, "page": 33, "id": "P086"}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "name": "戸籍住民基本台帳費運営費", "amount": 39157, "page": 53, "id": "P087"}, {"kan": "土木費", "kou": "都市計画費", "name": "浄化槽維持管理補助事業", "amount": 38916, "page": 136, "id": "P088"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校施設維持管理事業", "amount": 38216, "page": 153, "id": "P089"}, {"kan": "予備費", "kou": "予備費", "name": "予備費", "amount": 38198, "page": 181, "id": "P090"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "環境衛生費人件費", "amount": 37702, "page": 100, "id": "P091"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市単交通安全通学路整備事業", "amount": 37000, "page": 132, "id": "P092"}, {"kan": "教育費", "kou": "社会教育費", "name": "文化センター運営事業", "amount": 36899, "page": 167, "id": "P093"}, {"kan": "農林水産業費", "kou": "農業費", "name": "土地改良事業", "amount": 35020, "page": 113, "id": "P094"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "地域医療体制整備事業", "amount": 34898, "page": 95, "id": "P095"}, {"kan": "商工費", "kou": "商工費", "name": "商工業総合振興事業", "amount": 34086, "page": 119, "id": "P096"}, {"kan": "民生費", "kou": "社会福祉費", "name": "自立相談支援事業", "amount": 33256, "page": 65, "id": "P097"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校ＩＣＴ教育推進事業", "amount": 32548, "page": 155, "id": "P098"}, {"kan": "商工費", "kou": "商工費", "name": "観光地域づくり事業", "amount": 32345, "page": 125, "id": "P099"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者援助事業", "amount": 31256, "page": 68, "id": "P100"}, {"kan": "農林水産業費", "kou": "林業費", "name": "森林環境整備事業", "amount": 30762, "page": 117, "id": "P101"}, {"kan": "総務費", "kou": "総務管理費", "name": "結婚支援事業", "amount": 30730, "page": 44, "id": "P102"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子どもセンター運営事業", "amount": 29984, "page": 81, "id": "P103"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校施設維持管理事業", "amount": 29100, "page": 157, "id": "P104"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校教育振興支援事業", "amount": 28882, "page": 154, "id": "P105"}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "name": "マイナンバーカード普及促進事業", "amount": 28755, "page": 54, "id": "P106"}, {"kan": "総務費", "kou": "総務管理費", "name": "財政調整基金等積立金", "amount": 27557, "page": 38, "id": "P107"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業用施設維持補修事業", "amount": 27000, "page": 114, "id": "P108"}, {"kan": "教育費", "kou": "教育総務費", "name": "学校運営費", "amount": 26923, "page": 146, "id": "P109"}, {"kan": "教育費", "kou": "社会教育費", "name": "文化財保護活用事業", "amount": 25460, "page": 162, "id": "P110"}, {"kan": "総務費", "kou": "総務管理費", "name": "防犯事業", "amount": 25097, "page": 37, "id": "P111"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校教育振興支援事業", "amount": 24538, "page": 158, "id": "P112"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "環境衛生費運営費", "amount": 23757, "page": 100, "id": "P113"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "交通安全対策補助事業（通学路緊急対策）", "amount": 23000, "page": 132, "id": "P114"}, {"kan": "農林水産業費", "kou": "林業費", "name": "野生鳥獣保護・管理事業", "amount": 22896, "page": 115, "id": "P115"}, {"kan": "総務費", "kou": "総務管理費", "name": "会計管理事務", "amount": 22792, "page": 39, "id": "P116"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童クラブ運営事業", "amount": 22227, "page": 83, "id": "P117"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農産物ブランド化事業", "amount": 21393, "page": 112, "id": "P118"}, {"kan": "諸支出金", "kou": "公営企業費", "name": "水道事業会計繰出金", "amount": 20932, "page": 180, "id": "P119"}, {"kan": "民生費", "kou": "社会福祉費", "name": "国保・年金事業費人件費", "amount": 20586, "page": 65, "id": "P120"}, {"kan": "教育費", "kou": "社会教育費", "name": "高原美術館・白鳥映雪館運営事業", "amount": 20584, "page": 170, "id": "P121"}, {"kan": "総務費", "kou": "選挙費", "name": "県知事選挙運営費", "amount": 20573, "page": 56, "id": "P122"}, {"kan": "議会費", "kou": "議会費", "name": "議会運営費", "amount": 20004, "page": 32, "id": "P123"}, {"kan": "民生費", "kou": "人権政策費", "name": "人権同和政策総務費人件費", "amount": 19550, "page": 90, "id": "P124"}, {"kan": "民生費", "kou": "社会福祉費", "name": "社会福祉総務費運営費", "amount": 19434, "page": 63, "id": "P125"}, {"kan": "総務費", "kou": "総務管理費", "name": "広報広聴事業", "amount": 19253, "page": 43, "id": "P126"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "生きがい対策支援事業", "amount": 19037, "page": 74, "id": "P127"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業委員会運営費", "amount": 18788, "page": 106, "id": "P128"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子ども家庭支援事業", "amount": 18779, "page": 85, "id": "P129"}, {"kan": "総務費", "kou": "選挙費", "name": "県議会議員選挙運営費", "amount": 18247, "page": 58, "id": "P130"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "環境対策費運営費", "amount": 17972, "page": 98, "id": "P131"}, {"kan": "総務費", "kou": "総務管理費", "name": "一般管理費運営費", "amount": 17891, "page": 34, "id": "P132"}, {"kan": "農林水産業費", "kou": "農業費", "name": "土地改良区等補助金交付事業", "amount": 17211, "page": 114, "id": "P133"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "母子保健事業", "amount": 16603, "page": 97, "id": "P134"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業農村振興事業", "amount": 16564, "page": 109, "id": "P135"}, {"kan": "土木費", "kou": "都市計画費", "name": "県街路事業", "amount": 16500, "page": 137, "id": "P136"}, {"kan": "商工費", "kou": "商工費", "name": "まちなか活性化施設運営事業", "amount": 15720, "page": 120, "id": "P137"}, {"kan": "農林水産業費", "kou": "農業費", "name": "多面的機能支払交付金事業", "amount": 15635, "page": 114, "id": "P138"}, {"kan": "商工費", "kou": "商工費", "name": "小諸公園事業特別会計繰出金", "amount": 15500, "page": 125, "id": "P139"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "道路台帳補正業務費", "amount": 15431, "page": 129, "id": "P140"}, {"kan": "農林水産業費", "kou": "農業費", "name": "県営農業農村整備事業", "amount": 15331, "page": 113, "id": "P141"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "保健衛生総務費運営費", "amount": 14813, "page": 93, "id": "P142"}, {"kan": "衛生費", "kou": "清掃費", "name": "清掃総務費運営費", "amount": 14261, "page": 102, "id": "P143"}, {"kan": "商工費", "kou": "商工費", "name": "観光振興事業", "amount": 13900, "page": 121, "id": "P144"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農村資源活用施設管理事業", "amount": 13552, "page": 110, "id": "P145"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校給食運営事業", "amount": 13193, "page": 158, "id": "P146"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護適正実施推進事業", "amount": 13049, "page": 88, "id": "P147"}, {"kan": "総務費", "kou": "総務管理費", "name": "防災情報基盤整備・運用事業", "amount": 12784, "page": 49, "id": "P148"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校ＩＣＴ教育推進事業", "amount": 12460, "page": 159, "id": "P149"}, {"kan": "民生費", "kou": "人権政策費", "name": "隣保館運営事業", "amount": 12270, "page": 91, "id": "P150"}, {"kan": "民生費", "kou": "児童福祉費", "name": "自治体フロントヤード改革モデルプロジェクト事業", "amount": 12032, "page": 77, "id": "P151"}, {"kan": "教育費", "kou": "教育総務費", "name": "原油価格・物価高騰対応事業", "amount": 12000, "page": 148, "id": "P152"}, {"kan": "総務費", "kou": "総務管理費", "name": "職員厚生費", "amount": 11768, "page": 45, "id": "P153"}, {"kan": "総務費", "kou": "選挙費", "name": "選挙管理委員会人件費", "amount": 11611, "page": 56, "id": "P154"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "在宅福祉サービス事業", "amount": 11167, "page": 72, "id": "P155"}, {"kan": "総務費", "kou": "総務管理費", "name": "財産管理費運営費", "amount": 10869, "page": 44, "id": "P156"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "高峯聖地公園費運営費", "amount": 10813, "page": 101, "id": "P157"}, {"kan": "教育費", "kou": "社会教育費", "name": "小山敬三美術館運営事業", "amount": 10469, "page": 169, "id": "P158"}, {"kan": "農林水産業費", "kou": "農業費", "name": "機構集積支援事業", "amount": 10130, "page": 107, "id": "P159"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業人材育成事業", "amount": 10016, "page": 111, "id": "P160"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市単河川整備事業", "amount": 10000, "page": 132, "id": "P161"}, {"kan": "土木費", "kou": "都市計画費", "name": "浄化槽設置整備事業", "amount": 9756, "page": 135, "id": "P162"}, {"kan": "商工費", "kou": "商工費", "name": "観光施設運営事業", "amount": 9710, "page": 123, "id": "P163"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護総務費運営費", "amount": 9043, "page": 87, "id": "P164"}, {"kan": "総務費", "kou": "総務管理費", "name": "文書費", "amount": 8635, "page": 37, "id": "P165"}, {"kan": "土木費", "kou": "都市計画費", "name": "下水道環境費人件費", "amount": 8127, "page": 135, "id": "P166"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農地保全協働事業", "amount": 7974, "page": 114, "id": "P167"}, {"kan": "教育費", "kou": "教育総務費", "name": "部活動地域移行事業", "amount": 7293, "page": 149, "id": "P168"}, {"kan": "教育費", "kou": "保健体育費", "name": "大栄小諸球場運営事業", "amount": 7225, "page": 178, "id": "P169"}, {"kan": "教育費", "kou": "保健体育費", "name": "体育施設運営費", "amount": 6749, "page": 177, "id": "P170"}, {"kan": "総務費", "kou": "総務管理費", "name": "市民活動支援事業", "amount": 6535, "page": 41, "id": "P171"}, {"kan": "土木費", "kou": "都市計画費", "name": "小諸駅周辺駐車場管理事業", "amount": 6455, "page": 139, "id": "P172"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "人間ドック補助金", "amount": 6284, "page": 75, "id": "P173"}, {"kan": "衛生費", "kou": "清掃費", "name": "廃棄物減量リサイクル事業", "amount": 6277, "page": 104, "id": "P174"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子育て支援総務費運営費", "amount": 6241, "page": 86, "id": "P175"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童発達支援事業運営費", "amount": 6200, "page": 81, "id": "P176"}, {"kan": "総務費", "kou": "総務管理費", "name": "防災対策費運営費", "amount": 5950, "page": 48, "id": "P177"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "介護予防事業", "amount": 5773, "page": 73, "id": "P178"}, {"kan": "総務費", "kou": "総務管理費", "name": "秘書事務費", "amount": 5673, "page": 40, "id": "P179"}, {"kan": "民生費", "kou": "人権政策費", "name": "人権同和政策総務費運営費", "amount": 5369, "page": 89, "id": "P180"}, {"kan": "総務費", "kou": "総務管理費", "name": "公共施設マネジメント事業", "amount": 5295, "page": 38, "id": "P181"}, {"kan": "教育費", "kou": "社会教育費", "name": "支館・分館支援事業", "amount": 5085, "page": 166, "id": "P182"}, {"kan": "総務費", "kou": "総務管理費", "name": "普通財産管理費", "amount": 5072, "page": 44, "id": "P183"}, {"kan": "教育費", "kou": "保健体育費", "name": "保健体育総務費運営費", "amount": 4579, "page": 174, "id": "P184"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護受給者就労支援事業", "amount": 4507, "page": 88, "id": "P185"}, {"kan": "衛生費", "kou": "清掃費", "name": "塵芥処理施設管理事業", "amount": 4286, "page": 104, "id": "P186"}, {"kan": "農林水産業費", "kou": "林業費", "name": "林業振興事業", "amount": 4172, "page": 115, "id": "P187"}, {"kan": "教育費", "kou": "保健体育費", "name": "天池総合運動場運営事業", "amount": 4172, "page": 179, "id": "P188"}, {"kan": "土木費", "kou": "土木管理費", "name": "土木総務費運営費", "amount": 4168, "page": 126, "id": "P189"}, {"kan": "教育費", "kou": "保健体育費", "name": "スポーツ大会等運営事業", "amount": 4092, "page": 175, "id": "P190"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "健康づくり事業", "amount": 3924, "page": 96, "id": "P191"}, {"kan": "教育費", "kou": "社会教育費", "name": "高濱虚子記念館運営事業", "amount": 3902, "page": 173, "id": "P192"}, {"kan": "教育費", "kou": "社会教育費", "name": "藤村記念館運営事業", "amount": 3820, "page": 172, "id": "P193"}, {"kan": "教育費", "kou": "社会教育費", "name": "小諸藤村文学賞事業", "amount": 3797, "page": 162, "id": "P194"}, {"kan": "教育費", "kou": "社会教育費", "name": "公民館報発行事業", "amount": 3586, "page": 166, "id": "P195"}, {"kan": "消防費", "kou": "消防費", "name": "消防施設費運営費", "amount": 3573, "page": 144, "id": "P196"}, {"kan": "教育費", "kou": "教育総務費", "name": "特別支援教育等推進事業", "amount": 3427, "page": 150, "id": "P197"}, {"kan": "教育費", "kou": "社会教育費", "name": "史料館等管理事業", "amount": 3373, "page": 163, "id": "P198"}, {"kan": "総務費", "kou": "総務管理費", "name": "行政経営事業", "amount": 3361, "page": 39, "id": "P199"}, {"kan": "総務費", "kou": "統計調査費", "name": "統計調査事業", "amount": 3314, "page": 60, "id": "P200"}, {"kan": "教育費", "kou": "教育総務費", "name": "教育委員会運営費", "amount": 3261, "page": 144, "id": "P201"}, {"kan": "民生費", "kou": "社会福祉費", "name": "社会事業授産施設事業費運営費", "amount": 3200, "page": 70, "id": "P202"}, {"kan": "土木費", "kou": "都市計画費", "name": "都市計画総務費運営費", "amount": 3033, "page": 133, "id": "P203"}, {"kan": "民生費", "kou": "児童福祉費", "name": "青少年育成補導推進事業", "amount": 2813, "page": 85, "id": "P204"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "乳幼児健診事業", "amount": 2751, "page": 98, "id": "P205"}, {"kan": "土木費", "kou": "都市計画費", "name": "景観まちづくり事業", "amount": 2725, "page": 134, "id": "P206"}, {"kan": "教育費", "kou": "社会教育費", "name": "自主公演事業", "amount": 2675, "page": 168, "id": "P207"}, {"kan": "教育費", "kou": "人権同和教育費", "name": "人権同和教育推進事業", "amount": 2644, "page": 159, "id": "P208"}, {"kan": "土木費", "kou": "住宅費", "name": "住宅耐震化事業", "amount": 2610, "page": 141, "id": "P209"}, {"kan": "民生費", "kou": "社会福祉費", "name": "消費者行政事業", "amount": 2531, "page": 70, "id": "P210"}, {"kan": "教育費", "kou": "社会教育費", "name": "音楽のまち・こもろ推進事業", "amount": 2403, "page": 164, "id": "P211"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "狂犬病予防事業", "amount": 2232, "page": 101, "id": "P212"}, {"kan": "総務費", "kou": "選挙費", "name": "選挙管理委員会運営費", "amount": 2221, "page": 55, "id": "P213"}, {"kan": "教育費", "kou": "社会教育費", "name": "公民館運営事業", "amount": 2206, "page": 165, "id": "P214"}, {"kan": "総務費", "kou": "監査委員費", "name": "監査委員運営費", "amount": 2175, "page": 61, "id": "P215"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者援護費運営費", "amount": 2082, "page": 66, "id": "P216"}, {"kan": "総務費", "kou": "交通安全費", "name": "交通安全対策事業", "amount": 2026, "page": 62, "id": "P217"}, {"kan": "商工費", "kou": "商工費", "name": "布引温泉管理事業", "amount": 1900, "page": 120, "id": "P218"}, {"kan": "教育費", "kou": "社会教育費", "name": "学級・講座等開催事業", "amount": 1712, "page": 166, "id": "P219"}, {"kan": "教育費", "kou": "社会教育費", "name": "社会教育総務費運営費", "amount": 1629, "page": 160, "id": "P220"}, {"kan": "教育費", "kou": "教育総務費", "name": "教育支援センター等運営事業", "amount": 1580, "page": 150, "id": "P221"}, {"kan": "総務費", "kou": "交通安全費", "name": "県民交通災害共済事務", "amount": 1398, "page": 62, "id": "P222"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農地費運営費", "amount": 1263, "page": 112, "id": "P223"}, {"kan": "教育費", "kou": "社会教育費", "name": "小諸義塾記念館運営事業", "amount": 1151, "page": 172, "id": "P224"}, {"kan": "土木費", "kou": "住宅費", "name": "住宅新築資金等貸付事業", "amount": 1106, "page": 140, "id": "P225"}, {"kan": "農林水産業費", "kou": "農業費", "name": "畜産振興事業", "amount": 1070, "page": 110, "id": "P226"}, {"kan": "教育費", "kou": "教育総務費", "name": "事務局運営費", "amount": 1008, "page": 145, "id": "P227"}, {"kan": "民生費", "kou": "人権政策費", "name": "男女共同参画推進事業", "amount": 994, "page": 91, "id": "P228"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "社会福祉施設建設工事等助成事業", "amount": 979, "page": 74, "id": "P229"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "精神保健福祉事業", "amount": 919, "page": 95, "id": "P230"}, {"kan": "土木費", "kou": "住宅費", "name": "特定空家対策事業", "amount": 896, "page": 141, "id": "P231"}, {"kan": "総務費", "kou": "総務管理費", "name": "職員研修費", "amount": 893, "page": 46, "id": "P232"}, {"kan": "教育費", "kou": "教育総務費", "name": "姉妹都市教育委員等連携事業", "amount": 892, "page": 145, "id": "P233"}, {"kan": "教育費", "kou": "保健体育費", "name": "スポーツ推進委員会運営事業", "amount": 864, "page": 175, "id": "P234"}, {"kan": "教育費", "kou": "保健体育費", "name": "学校開放事業", "amount": 792, "page": 176, "id": "P235"}, {"kan": "民生費", "kou": "社会福祉費", "name": "行旅扶助厚生費", "amount": 622, "page": 64, "id": "P236"}, {"kan": "民生費", "kou": "社会福祉費", "name": "市民相談事業", "amount": 604, "page": 70, "id": "P237"}, {"kan": "教育費", "kou": "保健体育費", "name": "高地トレーニング等推進事業", "amount": 544, "page": 176, "id": "P238"}, {"kan": "民生費", "kou": "社会福祉費", "name": "総合福祉センター運営費", "amount": 511, "page": 64, "id": "P239"}, {"kan": "農林水産業費", "kou": "林業費", "name": "森林（もり）の里親事業", "amount": 500, "page": 116, "id": "P240"}, {"kan": "教育費", "kou": "社会教育費", "name": "二十歳を祝う会開催事業", "amount": 480, "page": 167, "id": "P241"}, {"kan": "民生費", "kou": "社会福祉費", "name": "国保・年金事業費運営費", "amount": 428, "page": 65, "id": "P242"}, {"kan": "総務費", "kou": "総務管理費", "name": "財政管理費運営費", "amount": 404, "page": 38, "id": "P243"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業総務費運営費", "amount": 364, "page": 108, "id": "P244"}, {"kan": "民生費", "kou": "人権政策費", "name": "多文化共生推進事業", "amount": 295, "page": 93, "id": "P245"}, {"kan": "総務費", "kou": "総務管理費", "name": "小諸市等公平委員会特別会計繰出金", "amount": 214, "page": 38, "id": "P246"}, {"kan": "民生費", "kou": "災害救助費", "name": "災害救助費", "amount": 200, "page": 89, "id": "P247"}, {"kan": "災害復旧費", "kou": "農林水産施設災害復旧費", "name": "農地農業用施設単独災害復旧事", "amount": 50, "page": 179, "id": "P248"}, {"kan": "災害復旧費", "kou": "公共土木施設災害復旧費", "name": "単独公共土木施設災害復旧事業", "amount": 50, "page": 180, "id": "P249"}], "population": [{"date": "2026-04-01", "population": 40800, "basis": "住民基本台帳（小諸市区別世帯人口表）"}]});</script>
-<style>
-#dash-root { --km-font: var(--font-anthropic-sans), "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif; }
-.km { font-family: var(--km-font); color: var(--color-fg); font-size: var(--cds-font-size-body); line-height: 1.7; max-width: 82rem; margin-inline: auto; }
-.km h1 { font-family: var(--font-anthropic-serif), "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.3; margin: 0; }
-.km h1 small { font-family: var(--km-font); font-size: var(--cds-font-size-body); color: var(--color-fg-muted); margin-left: var(--cds-gap-sm); }
-.km h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); line-height: 1.4; }
-.km-lead { margin: var(--cds-gap-sm) 0 var(--cds-gap-md); max-width: 60rem; }
-.km .km-lead b, .km .km-num b { font-weight: 600; font-variant-numeric: tabular-nums; }
-.km-disclaimer { border: 1px solid var(--color-border-line); border-left: 4px solid var(--color-warn); background: var(--color-panel); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-md); }
-.km-disclaimer strong { color: var(--color-fg); }
-.km-tabs { display: flex; gap: var(--cds-gap-xs); flex-wrap: wrap; border-bottom: 1px solid var(--color-border-line); margin-bottom: var(--cds-gap-md); }
-.km-tab { font: inherit; background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-xs) var(--cds-pad-md); color: var(--color-fg-muted); cursor: pointer; }
-.km-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
-.km-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-md); }
-.km-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
-.km-stat .k { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-stat .v { font-family: var(--font-anthropic-serif), serif; font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.25; font-variant-numeric: tabular-nums; }
-.km-stat .v small { font-family: var(--km-font); font-size: var(--cds-font-size-body); margin-left: 2px; }
-.km-stat .s { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-sm); }
-.km-flowgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem); gap: var(--cds-gap-md); align-items: start; margin-bottom: var(--cds-gap-md); }
-@media (max-width: 62rem) { .km-flowgrid { grid-template-columns: minmax(0, 1fr); } }
-.km-scroll { overflow-x: auto; }
-.km-sankey { position: relative; min-height: 560px; width: 100%; }
-.km-sankey svg { display: block; }
-.km-sankey .node { cursor: pointer; }
-.km-sankey .lbl { font-size: 12px; fill: var(--color-fg); font-family: var(--km-font); }
-.km-sankey .lbl .amt { fill: var(--color-fg-muted); }
-.km-sankey .mid { paint-order: stroke; stroke: var(--color-panel); stroke-width: 4px; stroke-linejoin: round; font-weight: 600; }
-.km-sankey .link { transition: opacity var(--cds-dur-slow); }
-.km-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); max-width: 16rem; z-index: 2; }
-.km-tip .t { color: var(--cds-text-secondary); }
-.km-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: var(--cds-gap-sm); }
-.km-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
-.km-legend .dash { display: inline-block; width: 16px; border-top: 2px dashed var(--color-fg-muted); margin-right: 4px; vertical-align: 3px; }
-.km-btn { font: inherit; font-size: var(--cds-font-size-caption); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 2px 12px; cursor: pointer; }
-.km-btn:hover { border-color: var(--color-fg-muted); }
-.km-panel { position: sticky; top: var(--cds-gap-md); max-height: calc(100vh - 2rem); overflow: auto; }
-.km-panel .eyebrow { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-panel .big { font-family: var(--font-anthropic-serif), serif; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.3; }
-.km-panel h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
-.km-panel p { margin: var(--cds-gap-xs) 0; }
-.km-rows { list-style: none; margin: 0; padding: 0; }
-.km-rows li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--cds-gap-sm); padding: 4px 0; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); }
-.km-rows li .n { overflow-wrap: anywhere; }
-.km-rows li .a { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-.km-rows li .bar { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--cds-chart-muted); }
-.km-stack { display: flex; height: 14px; border-radius: var(--cds-radius); overflow: hidden; margin: var(--cds-gap-xs) 0; }
-.km-up { color: var(--color-ok); } .km-down { color: var(--color-bad); }
-.km-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
-.km-diff { position: relative; width: 100%; min-height: 200px; }
-.km-diff text { font-size: 12px; fill: var(--color-fg); font-family: var(--km-font); }
-.km-diff .muted { fill: var(--color-fg-muted); }
-.km-ptools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; margin-bottom: var(--cds-gap-sm); }
-.km-ptools input { font: inherit; padding: 4px 10px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); min-width: min(100%, 18rem); }
-.km-ptools .dash-select { height: 2rem; }
-.km-count { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-tablebox { max-height: 70vh; overflow: auto; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
-.km-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
-.km-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; }
-.km-table th button { font: inherit; font-weight: var(--cds-font-weight-medium); background: none; border: 0; color: var(--color-fg); padding: 6px 10px; cursor: pointer; width: 100%; text-align: inherit; }
-.km-table td { padding: 6px 10px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
-.km-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.km-table td.num .cb { height: 3px; border-radius: 2px; background: var(--cds-chart-muted); margin-top: 3px; margin-left: auto; }
-@media (max-width: 40rem) { .km-table .hide-narrow { display: none; } }
-.km-about { max-width: 48rem; }
-.km-about h2 { margin-top: var(--cds-gap-lg); }
-.km-about dt { font-weight: var(--cds-font-weight-medium); margin-top: var(--cds-gap-sm); }
-.km-about dd { margin: 0 0 0 1em; }
-.km-about li { margin-bottom: var(--cds-gap-xs); }
-.km a { color: inherit; text-underline-offset: 2px; }
-[data-dash-source-state=empty] { color: transparent; }
-[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-</style>
 
 <div class="km">
-  <header>
-    <h1 id="top">まるわかり 小諸市予算<small>令和8年度 一般会計 当初予算</small></h1>
-    <p class="km-lead">令和8年度の小諸市一般会計の当初予算は <b data-draw="s-total" data-source="c_summary" data-field="total_oku">—</b>億円。前年度より <b data-draw="s-diff" data-source="c_summary" data-field="diff_oku">—</b>億円（<b data-draw="s-pct" data-source="c_summary" data-field="pct">—</b>%）大きくなりました。いちばん増えたのは <b data-draw="s-upkan" data-source="c_summary" data-field="top_up_kan">—</b>（<b data-draw="s-upoku" data-source="c_summary" data-field="top_up_oku">—</b>億円増）です。</p>
-    <div class="km-disclaimer"><strong>小諸市の公式サイトではありません。</strong>小諸市が公開している「令和8年度一般会計当初予算書」の数字をもとに、個人が作成した非公式のページです。数字は当初予算（年度はじめの計画）で、年度途中の補正予算や実際に使った額（決算）とは異なります。正確な数字は必ず出典の資料でご確認ください。</div>
-  </header>
-
-  <nav class="km-tabs" role="tablist" aria-label="ページ切り替え">
+  <header class="km-top">
+    <div class="km-top-inner">
+      <span class="km-brand">まる見え 小諸市予算 <span class="km-badge">β版</span></span>
+      <nav class="km-tabs" role="tablist" aria-label="ページ切り替え">
     <button class="km-tab" role="tab" type="button" data-tab="flow" aria-selected="true">お金の流れ</button>
     <button class="km-tab" role="tab" type="button" data-tab="change" aria-selected="false">前年度との違い</button>
     <button class="km-tab" role="tab" type="button" data-tab="jigyo" aria-selected="false">事業一覧</button>
     <button class="km-tab" role="tab" type="button" data-tab="about" aria-selected="false">説明と出典</button>
   </nav>
+    </div>
+  </header>
+  <section class="km-head">
+    <h1 id="top">令和8年度 小諸市 一般会計 当初予算</h1>
+    <p class="km-meta">小諸市「令和8年度一般会計当初予算書」から作成</p>
+    <p class="km-lead">令和8年度の小諸市一般会計の当初予算は <b data-draw="s-total" data-source="c_summary" data-field="total_oku">—</b>億円。前年度より <b data-draw="s-diff" data-source="c_summary" data-field="diff_oku">—</b>億円（<b data-draw="s-pct" data-source="c_summary" data-field="pct">—</b>%）大きくなりました。いちばん増えたのは <b data-draw="s-upkan" data-source="c_summary" data-field="top_up_kan">—</b>（<b data-draw="s-upoku" data-source="c_summary" data-field="top_up_oku">—</b>億円増）です。</p>
+    <div class="km-disclaimer"><strong>β版・非公式</strong>　小諸市の公式サイトではありません。小諸市が公開している「令和8年度一般会計当初予算書」の数字をもとに、個人が作成した非公式のページです。数字は当初予算（年度はじめの計画）で、年度途中の補正予算や実際に使った額（決算）とは異なります。正確な数字は必ず出典の資料でご確認ください。</div>
+  </section>
 
   <section id="flow" data-section="flow">
     <div class="km-stats">
@@ -170,6 +222,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
       <div class="km-card">
         <h2 id="sankey">どこから入って、何に使われるか</h2>
         <p class="km-note">左が収入（歳入）、まん中が使い道の自由度、右が目的別の支出（歳出の款）。四角を押すとその流れだけが強調され、右側に内訳が出ます。</p>
+        <p class="km-swipe">図は横にスクロールできます →</p>
         <div class="km-scroll"><div class="km-sankey" data-draw="sankey" data-source="c_flows">—</div></div>
         <div class="km-legend">
           <span><span class="sw" data-draw="sw0">—</span>一般財源（使い道が自由）</span>
@@ -420,7 +473,7 @@ dash.draw('sankey', (el) => {
   const rightTot = {};
   links.filter((l) => km.FUNDS.includes(l.source)).forEach((l) => { rightTot[l.target] = (rightTot[l.target] || 0) + l.value; });
   const right = Object.keys(rightTot).sort((a, b) => (a === 'その他の款' ? 1 : b === 'その他の款' ? -1 : rightTot[b] - rightTot[a]));
-  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '収入から財源区分、支出の款へのお金の流れ');
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '収入から財源区分、支出の款へのお金の流れ');
   const measure = (names) => { const t = svg.append('g'); let m = 0; names.forEach((n) => { const x = t.append('text').attr('class', 'lbl').text(n); m = Math.max(m, x.node().getComputedTextLength()); }); t.remove(); return m; };
   const withAmt = (ns) => ns.map((n) => n + ' 00.0億円');
   const mL = Math.min(measure(withAmt(left)) + 10, W * 0.3), mR = Math.min(measure(withAmt(right)) + 10, W * 0.3);
@@ -611,7 +664,7 @@ dash.draw('ptable', (tb) => {
 });
 
 }</script>
-<footer class="km-foot">このページは小諸市の公式サイトではありません。数字の出典は小諸市「令和8年度一般会計当初予算書」ほか（「説明と出典」タブ参照）。データとソース：<a href="https://github.com/thunder-19900512/komoro-budget" target="_blank" rel="noopener">github.com/thunder-19900512/komoro-budget</a></footer>
+<footer class="km-foot"><div>このページは小諸市の公式サイトではありません。数字の出典は小諸市「令和8年度一般会計当初予算書」ほか（「説明と出典」タブ参照）。データとソース：<a href="https://github.com/thunder-19900512/komoro-budget" target="_blank" rel="noopener">github.com/thunder-19900512/komoro-budget</a></div></footer>
 </div>
 <script>
 (function () {
