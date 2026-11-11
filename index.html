@@ -3,41 +3,198 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>まるわかり 小諸市予算（令和8年度・非公式）</title>
-<meta name="description" content="小諸市の令和8年度一般会計当初予算（237億円）が、どこから入り何に使われるかを図で見られる非公式ページ。数字は小諸市の公開資料（当初予算書）から作成。">
-<meta property="og:title" content="まるわかり 小諸市予算（令和8年度・非公式）">
+<title>まるっと予算ナビ@小諸｜小諸市 令和8年度予算（β版・非公式）</title>
+<meta name="description" content="小諸市の令和8年度一般会計当初予算（237億円）が、どこから入り何に使われるかを図で見られる非公式ページ。近隣の市町や全国の似た市との決算の比較も。数字は小諸市と総務省の公開資料から作成。">
+<meta property="og:title" content="まるっと予算ナビ@小諸｜小諸市 令和8年度予算（β版・非公式）">
 <meta property="og:description" content="小諸市の公開資料から個人が作成した非公式ページです。">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<meta name="theme-color" content="#2aa693">
 <style>
+/*
+ * デザイン：チームみらい デザインシステム v0.3（Webアプリ向け）のトークンに合わせています。
+ * 単一HTML・Tailwind なしの構成なので、SKILL.md §13 の例外と同じく「トークン名と意味だけ揃える」方針。
+ * レイアウトは references/11-page-templates.md §2「ダッシュボード（marumie 風）」がベース。
+ */
 :root {
   color-scheme: light;
-  --color-fg: #1f2328; --color-fg-muted: #5c6670; --color-bg: #ffffff; --color-panel: #f7f7f5; --color-border-line: #e2e2dc;
-  --color-ok: #1f7a46; --color-warn: #b7791f; --color-bad: #b4402f;
-  --km-c0: #2f6fb0; --km-c1: #d08a2e; --km-c2: #8a5aa6; --km-c3: #5f8f6b;
-  --cds-chart-muted: #c3c7c9; --cds-chart-axis: #9aa1a6; --cds-surface-popover: #ffffff; --cds-border: #d7d7d0; --cds-text-secondary: #5c6670;
-  --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.12);
-  --font-anthropic-sans: system-ui, -apple-system, "Segoe UI";
-  --font-anthropic-serif: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
-  --cds-font-size-caption: 13px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
-  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px;
-  --cds-radius: 8px; --cds-dur-slow: .3s;
+  /* --- チームみらい トークン（SKILL.md §5） --- */
+  --mirai-primary: #2aa693;
+  --mirai-primary-accent: #0f8472;
+  --mirai-gradient: linear-gradient(to bottom right, #64d8c6, #bcecd3);
+  --mirai-bg-dashboard: linear-gradient(135deg, #e2f6f3 0%, #eef6e2 100%); /* marumie の --background */
+  --mirai-card: #ffffff;
+  --mirai-text: #1f2937;
+  --mirai-text-muted: #6b7280; /* marumie text-muted。#8E8E93 は白背景で小さい文字のコントラストが足りないため */
+  --mirai-border: #d2d2d2;
+  --mirai-surface: #f7f4ee; /* warm gray */
+  --mirai-highlight: #f4ff5f;
+  --mirai-danger: #dc2626;
+  --mirai-focus: rgba(42, 166, 147, 0.4);
+  /* --- 財源区分の色（サンキー図・凡例・内訳バー） --- */
+  --km-c0: #2aa693; /* 一般財源：ブランドのティール */
+  --km-c1: #4f566b; /* 国・県の補助金など：marumie の TOTAL 色 */
+  --km-c2: #dc2626; /* 市債：marumie の支出色 */
+  --km-c3: #9ca3af; /* その他の特定財源 */
+  /* --- 描画スクリプトが参照する名前（中身は上のトークン） --- */
+  --km-font: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  --color-fg: var(--mirai-text);
+  --color-fg-muted: var(--mirai-text-muted);
+  --color-ok: var(--mirai-primary-accent);
+  --color-bad: var(--mirai-danger);
+  --cds-chart-muted: #d1d5db;
+  --cds-chart-axis: #9ca3af;
+  --km-focus: #4f566b; /* 比べるタブで選んだ市町の線 */
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  color-scheme: dark;
-  --color-fg: #e8e8e3; --color-fg-muted: #a3aaa8; --color-bg: #161817; --color-panel: #1f2220; --color-border-line: #333835;
-  --color-ok: #6fcf97; --color-warn: #e0b45a; --color-bad: #ef8a7a;
-  --km-c0: #6fa6e0; --km-c1: #e6a65a; --km-c2: #b48ad0; --km-c3: #8cbf98;
-  --cds-chart-muted: #4b524f; --cds-chart-axis: #6c7470; --cds-surface-popover: #262a28; --cds-border: #3a403c; --cds-text-secondary: #a3aaa8;
-  --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
-} }
-html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
-#dash-root { box-sizing: border-box; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(32px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+html { scroll-padding-top: 96px; }
+body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); color: var(--mirai-text); font-family: var(--km-font); -webkit-font-smoothing: antialiased; }
+#dash-root { box-sizing: border-box; padding: 0 0 env(safe-area-inset-bottom, 0px); }
 #dash-root *, #dash-root *::before, #dash-root *::after { box-sizing: border-box; }
-.dash-select { font: inherit; font-size: 14px; padding: 0 28px 0 10px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background-color: var(--color-bg); color: var(--color-fg); }
-.km-foot a { color: inherit; }
-.km-foot { max-width: 82rem; margin: 32px auto 0; padding-top: 12px; border-top: 1px solid var(--color-border-line); font-size: 13px; color: var(--color-fg-muted); }
+.km { font-size: 15px; line-height: 1.875; font-weight: 400; max-width: 72rem; margin: 0 auto; padding: 0 16px 48px; }
+.km a { color: var(--mirai-primary-accent); text-underline-offset: 3px; }
+.km :focus-visible { outline: 2px solid var(--mirai-focus); outline-offset: 2px; border-radius: 6px; }
+
+/* 固定ヘッダー（11-page-templates §6：白い rounded box の浮島） */
+.km-top { position: sticky; top: 0; z-index: 40; padding: max(12px, env(safe-area-inset-top, 0px)) 0 12px; }
+.km-top-inner { background: var(--mirai-card); border-radius: 20px; padding: 10px 16px; display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap; }
+.km-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; color: var(--mirai-text); white-space: nowrap; }
+.km-badge { display: inline-flex; align-items: center; padding: 0 10px; font-size: 12px; font-weight: 500; line-height: 22px; color: var(--mirai-text); background: var(--mirai-highlight); border-radius: 20px; }
+.km-tabs { display: flex; gap: 6px; flex-wrap: nowrap; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+.km-tabs::-webkit-scrollbar { display: none; }
+.km-tab { white-space: nowrap; flex: none; }
+@media (max-width: 40rem) { .km-top-inner { padding: 10px 12px; gap: 8px; } .km-tabs { margin: 0 -4px; width: calc(100% + 8px); } }
+.km-tab { font: inherit; font-size: 14px; font-weight: 700; color: var(--mirai-text); background: transparent; border: 1px solid transparent; border-radius: 999px; padding: 4px 14px; cursor: pointer; transition: background-color .2s, border-color .2s; }
+.km-tab:hover { background: var(--mirai-surface); }
+.km-tab[aria-selected="true"] { background: var(--mirai-gradient); border-color: #000; }
+
+/* ページヘッダー（ダッシュボードは Hero なし：タイトル + メタ） */
+.km-head { padding: 24px 4px 20px; }
+.km h1 { font-size: 28px; line-height: 1.4; font-weight: 700; letter-spacing: normal; margin: 0 0 4px; }
+.km-meta { font-size: 14px; font-weight: 500; color: var(--mirai-text-muted); margin: 0; }
+.km-lead { margin: 12px 0 16px; max-width: 52rem; font-weight: 500; }
+.km .km-lead b, .km .km-num b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.km-disclaimer { background: var(--mirai-card); border: 1px solid var(--mirai-border); border-radius: 16px; padding: 12px 16px; font-size: 13px; line-height: 1.8; color: var(--mirai-text-muted); }
+.km-disclaimer strong { color: var(--mirai-text); font-weight: 700; }
+
+.km h2 { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 6px; }
+.km-note { font-size: 13px; line-height: 1.8; color: var(--mirai-text-muted); font-weight: 500; margin: 0 0 12px; }
+
+/* カード（marumie の MainColumnCard：白 + rounded 24px + 厚めの余白、影なし） */
+.km-card { background: var(--mirai-card); border-radius: 24px; padding: 28px 18px; min-width: 0; }
+@media (min-width: 640px) { .km-card { padding: 32px; } }
+.km-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 16px; margin-bottom: 16px; }
+.km-stat { padding: 24px; }
+.km-stat .k { font-size: 14px; font-weight: 500; color: var(--mirai-text-muted); }
+.km-stat .v { font-size: 30px; font-weight: 700; line-height: 1.3; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.km-stat .v small { font-size: 15px; font-weight: 700; margin-left: 2px; }
+.km-stat .s { font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); }
+@media (max-width: 40rem) { .km-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .km-stat { padding: 16px; border-radius: 20px; } .km-stat .k { font-size: 12px; line-height: 1.6; } .km-stat .v { font-size: 24px; } .km-stat .s { font-size: 12px; line-height: 1.6; } }
+
+.km-flowgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem); gap: 16px; align-items: start; margin-bottom: 16px; }
+@media (max-width: 62rem) { .km-flowgrid { grid-template-columns: minmax(0, 1fr); } }
+.km-scroll { overflow-x: auto; }
+.km-sankey { position: relative; min-height: 560px; width: 100%; }
+.km-sankey svg { display: block; max-width: none; }
+.km-swipe { display: none; font-size: 12px; font-weight: 500; color: var(--mirai-text-muted); margin: 0 0 6px; }
+@media (max-width: 44rem) { .km-swipe { display: block; } }
+.km-sankey .node { cursor: pointer; }
+.km-sankey .node:focus-visible { outline: none; }
+.km-sankey .node:focus-visible rect { stroke: var(--mirai-text); stroke-width: 2px; }
+.km-sankey .lbl { font-size: 12px; font-weight: 500; fill: var(--mirai-text); font-family: var(--km-font); }
+.km-sankey .lbl .amt { fill: var(--mirai-text-muted); font-weight: 400; }
+.km-sankey .mid { paint-order: stroke; stroke: var(--mirai-card); stroke-width: 4px; stroke-linejoin: round; font-weight: 700; }
+.km-sankey .link { transition: fill-opacity .2s; }
+.km-tip { position: absolute; pointer-events: none; background: var(--mirai-card); border: 1px solid var(--mirai-border); border-radius: 12px; box-shadow: 0 2px 8px rgba(31, 41, 55, .08); padding: 6px 10px; font-size: 13px; line-height: 1.6; max-width: 16rem; z-index: 2; }
+.km-tip .t { color: var(--mirai-text-muted); }
+.km-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); margin-top: 12px; }
+.km-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+.km-legend .dash { display: inline-block; width: 16px; border-top: 2px dashed var(--mirai-text-muted); margin-right: 6px; vertical-align: 4px; }
+
+/* セカンダリボタン：白ピル + 黒 1px ボーダー（Button variant="outline"） */
+.km-btn { font: inherit; font-size: 13px; font-weight: 700; background: var(--mirai-card); color: var(--mirai-text); border: 1px solid #000; border-radius: 999px; padding: 4px 16px; cursor: pointer; transition: background-color .2s; }
+.km-btn:hover { background: var(--mirai-surface); }
+
+.km-panel { position: sticky; top: 88px; max-height: calc(100vh - 104px); overflow: auto; }
+.km-panel .eyebrow { font-size: 12px; font-weight: 700; color: var(--mirai-primary-accent); }
+.km-panel h2 { margin-bottom: 0; }
+.km-panel .big { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.4; }
+.km-panel h3 { font-size: 15px; font-weight: 700; margin: 20px 0 6px; }
+.km-panel p { margin: 6px 0; font-size: 14px; }
+.km-rows { list-style: none; margin: 0; padding: 0; }
+.km-rows li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 6px 0; border-bottom: 1px solid #ececec; font-size: 13px; line-height: 1.6; }
+.km-rows li .n { overflow-wrap: anywhere; }
+.km-rows li .a { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; font-weight: 500; }
+.km-rows li .bar { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--cds-chart-muted); }
+.km-stack { display: flex; height: 12px; border-radius: 999px; overflow: hidden; margin: 6px 0; }
+.km-up { color: var(--mirai-primary-accent); font-weight: 700; } .km-down { color: var(--mirai-danger); font-weight: 700; }
+
+.km-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 16px; }
+.km-diff { position: relative; width: 100%; min-height: 200px; }
+.km-diff text { font-size: 12px; font-weight: 500; fill: var(--mirai-text); font-family: var(--km-font); }
+.km-diff .muted { fill: var(--mirai-text-muted); }
+
+.km-ptools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.km-ptools input, .km-ptools select { font: inherit; font-size: 14px; height: 36px; padding: 0 12px; border: 1px solid var(--mirai-border); border-radius: 999px; background: var(--mirai-card); color: var(--mirai-text); }
+.km-ptools input { min-width: min(100%, 20rem); }
+.km-count { font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); }
+.km-tablebox { max-height: 70vh; overflow: auto; border: 1px solid var(--mirai-border); border-radius: 16px; }
+.km-table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.6; }
+.km-table th { position: sticky; top: 0; background: var(--mirai-surface); text-align: left; border-bottom: 1px solid var(--mirai-border); padding: 0; z-index: 1; }
+.km-table th button { font: inherit; font-weight: 700; background: none; border: 0; color: var(--mirai-text); padding: 8px 12px; cursor: pointer; width: 100%; text-align: inherit; }
+.km-table td { padding: 8px 12px; border-bottom: 1px solid #ececec; vertical-align: top; }
+.km-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.km-table td.num .cb { height: 3px; border-radius: 2px; background: var(--mirai-primary); opacity: .45; margin-top: 4px; margin-left: auto; }
+@media (max-width: 40rem) { .km-table .hide-narrow { display: none; } }
+
+.km-about { max-width: 48rem; }
+.km-about h2 { margin-top: 28px; }
+.km-about h2:first-child { margin-top: 0; }
+.km-about dt { font-weight: 700; margin-top: 10px; }
+.km-about dd { margin: 0 0 0 1em; }
+.km-about li { margin-bottom: 6px; }
+
+/* フッター（SKILL.md §7：dark gray + 白文字） */
+.km-foot { background: var(--mirai-text); color: #fff; font-size: 13px; line-height: 1.8; padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+.km-foot > div { max-width: 72rem; margin: 0 auto; }
+.km-foot a { color: #fff; }
+/* 比べるタブ（近隣・似た市） */
+.km [hidden] { display: none !important; }
+.km-subtabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 4px 16px; }
+.km-subtab { font: inherit; font-size: 13px; font-weight: 700; background: var(--mirai-card); color: var(--mirai-text); border: 1px solid var(--mirai-border); border-radius: 999px; padding: 4px 16px; cursor: pointer; transition: background-color .2s, border-color .2s; }
+.km-subtab:hover { background: var(--mirai-surface); }
+.km-subtab[aria-pressed="true"] { border-color: #000; background: var(--mirai-surface); }
+.km-cmp > * + * { margin-top: 16px; }
+.km-cmp .km-stats { margin-bottom: 0; }
+.km-stat .r { font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); margin-top: 2px; }
+.km-chips { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.km-chip { font: inherit; font-size: 13px; font-weight: 500; background: var(--mirai-card); color: var(--mirai-text); border: 1px solid var(--mirai-border); border-radius: 999px; padding: 2px 12px; cursor: pointer; }
+.km-chip[aria-pressed="true"] { border-color: var(--km-focus); color: var(--km-focus); font-weight: 700; }
+.km-chip.is-komoro { border-color: var(--mirai-primary-accent); color: var(--mirai-primary-accent); font-weight: 700; cursor: default; }
+.km-cmpbar { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; }
+.km-cmpbar .lbl { font-size: 13px; font-weight: 700; margin-right: 4px; }
+.km-seg { display: inline-flex; gap: 6px; }
+.km-seg .km-btn[aria-pressed="false"] { border-color: var(--mirai-border); font-weight: 500; }
+.km-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr)); gap: 16px; }
+.km-charts .km-card { padding: 22px 18px 18px; }
+.km-charts h2 { font-size: 16px; margin: 0; }
+.km-charts .km-note { margin: 2px 0 8px; }
+.km-line svg { display: block; width: 100%; height: auto; }
+.km-line text { font-size: 11px; font-weight: 500; fill: var(--mirai-text-muted); font-family: var(--km-font); }
+.km-line text.k { fill: var(--mirai-primary-accent); font-weight: 700; }
+.km-line text.f { fill: var(--km-focus); font-weight: 700; }
+.km-chg { font-size: 13px; font-weight: 500; margin: 6px 0 0; }
+.km-chg b { color: var(--mirai-primary-accent); font-variant-numeric: tabular-nums; }
+.km-cmp .km-table tr.is-komoro td { background: #eef8f6; font-weight: 700; }
+.km-cmp .km-table td:first-child, .km-cmp .km-table th:first-child { position: sticky; left: 0; background: var(--mirai-card); z-index: 1; }
+.km-cmp .km-table th:first-child { background: var(--mirai-surface); z-index: 2; }
+.km-cmp .km-table tr.is-komoro td:first-child { background: #eef8f6; }
+.km-cmp .km-table th { padding: 8px 12px; font-weight: 700; white-space: nowrap; }
+.km-cmp .km-table td:first-child { white-space: nowrap; }
+.km-why ol { margin: 8px 0 0; padding-left: 1.4em; }
+.km-why li { margin-bottom: 4px; }
 </style>
 <script src="vendor/d3.min.js"></script>
 <script>
@@ -69,95 +226,31 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
 <body>
 <div id="dash-root">
 <script>dash._load({"rev_kan": [{"no": 1, "kan": "市税", "amount": 5222285, "prev": 5200193, "group": "市税"}, {"no": 2, "kan": "地方譲与税", "amount": 210000, "prev": 217237, "group": "譲与税・各種交付金"}, {"no": 3, "kan": "利子割交付金", "amount": 7000, "prev": 2000, "group": "譲与税・各種交付金"}, {"no": 4, "kan": "配当割交付金", "amount": 20000, "prev": 20000, "group": "譲与税・各種交付金"}, {"no": 5, "kan": "株式等譲渡所得割交付金", "amount": 20000, "prev": 10000, "group": "譲与税・各種交付金"}, {"no": 6, "kan": "法人事業税交付金", "amount": 90000, "prev": 90000, "group": "譲与税・各種交付金"}, {"no": 7, "kan": "地方消費税交付金", "amount": 1000000, "prev": 1000000, "group": "地方消費税交付金"}, {"no": 8, "kan": "ゴルフ場利用税交付金", "amount": 7000, "prev": 7000, "group": "譲与税・各種交付金"}, {"no": 9, "kan": "地方特例交付金", "amount": 67469, "prev": 30978, "group": "譲与税・各種交付金"}, {"no": 10, "kan": "地方交付税", "amount": 4750000, "prev": 4350000, "group": "地方交付税"}, {"no": 11, "kan": "交通安全対策特別交付金", "amount": 3000, "prev": 3000, "group": "譲与税・各種交付金"}, {"no": 12, "kan": "分担金及び負担金", "amount": 104355, "prev": 95677, "group": "その他の収入"}, {"no": 13, "kan": "使用料及び手数料", "amount": 261199, "prev": 238493, "group": "その他の収入"}, {"no": 14, "kan": "国庫支出金", "amount": 5747253, "prev": 4626703, "group": "国庫支出金"}, {"no": 15, "kan": "県支出金", "amount": 1330142, "prev": 1204047, "group": "県支出金"}, {"no": 16, "kan": "財産収入", "amount": 94608, "prev": 73342, "group": "その他の収入"}, {"no": 17, "kan": "寄附金", "amount": 421020, "prev": 439020, "group": "その他の収入"}, {"no": 18, "kan": "繰入金", "amount": 1920354, "prev": 1785942, "group": "基金の取り崩しなど"}, {"no": 19, "kan": "繰越金", "amount": 200000, "prev": 200000, "group": "その他の収入"}, {"no": 20, "kan": "諸収入", "amount": 892015, "prev": 845668, "group": "その他の収入"}, {"no": 21, "kan": "市債", "amount": 1332300, "prev": 412700, "group": "市債"}, {"no": 99, "kan": "環境性能割交付金（廃款）", "amount": 0, "prev": 18000, "group": "譲与税・各種交付金"}], "rev_kou": [{"kan": "市税", "kou": "市民税", "amount": 2215195}, {"kan": "市税", "kou": "固定資産税", "amount": 2215605}, {"kan": "市税", "kou": "軽自動車税", "amount": 186000}, {"kan": "市税", "kou": "市たばこ税", "amount": 319385}, {"kan": "市税", "kou": "入湯税", "amount": 14000}, {"kan": "市税", "kou": "都市計画税", "amount": 272100}, {"kan": "地方譲与税", "kou": "自動車重量譲与税", "amount": 150000}, {"kan": "地方譲与税", "kou": "地方揮発油譲与税", "amount": 43000}, {"kan": "地方譲与税", "kou": "森林環境譲与税", "amount": 17000}, {"kan": "利子割交付金", "kou": "利子割交付金", "amount": 7000}, {"kan": "配当割交付金", "kou": "配当割交付金", "amount": 20000}, {"kan": "株式等譲渡所得割交付金", "kou": "株式等譲渡所得割交付金", "amount": 20000}, {"kan": "法人事業税交付金", "kou": "法人事業税交付金", "amount": 90000}, {"kan": "地方消費税交付金", "kou": "地方消費税交付金", "amount": 1000000}, {"kan": "ゴルフ場利用税交付金", "kou": "ゴルフ場利用税交付金", "amount": 7000}, {"kan": "地方特例交付金", "kou": "地方特例交付金", "amount": 67000}, {"kan": "地方特例交付金", "kou": "新型コロナウイルス感染症対策地方税減収補填特別交付金", "amount": 469}, {"kan": "地方交付税", "kou": "地方交付税", "amount": 4750000}, {"kan": "交通安全対策特別交付金", "kou": "交通安全対策特別交付金", "amount": 3000}, {"kan": "分担金及び負担金", "kou": "負担金", "amount": 104355}, {"kan": "使用料及び手数料", "kou": "使用料", "amount": 136240}, {"kan": "使用料及び手数料", "kou": "手数料", "amount": 124959}, {"kan": "国庫支出金", "kou": "国庫負担金", "amount": 2259427}, {"kan": "国庫支出金", "kou": "国庫補助金", "amount": 3466661}, {"kan": "国庫支出金", "kou": "委託金", "amount": 21165}, {"kan": "県支出金", "kou": "県負担金", "amount": 807620}, {"kan": "県支出金", "kou": "県補助金", "amount": 412843}, {"kan": "県支出金", "kou": "委託金", "amount": 109679}, {"kan": "財産収入", "kou": "財産運用収入", "amount": 92323}, {"kan": "財産収入", "kou": "財産売払収入", "amount": 2285}, {"kan": "寄附金", "kou": "寄附金", "amount": 421020}, {"kan": "繰入金", "kou": "特別会計繰入金", "amount": 3168}, {"kan": "繰入金", "kou": "基金繰入金", "amount": 1917186}, {"kan": "繰越金", "kou": "繰越金", "amount": 200000}, {"kan": "諸収入", "kou": "延滞金・加算金及び過料", "amount": 5000}, {"kan": "諸収入", "kou": "市預金利子", "amount": 10}, {"kan": "諸収入", "kou": "貸付金元利収入", "amount": 629320}, {"kan": "諸収入", "kou": "受託事業収入", "amount": 31378}, {"kan": "諸収入", "kou": "雑入", "amount": 226307}, {"kan": "市債", "kou": "市債", "amount": 1332300}], "rev_kikin": [{"fund": "財政調整基金", "amount": 1429000, "prev": 1388000}, {"fund": "学校建設準備基金", "amount": 400000, "prev": 0}, {"fund": "地域振興基金", "amount": 80506, "prev": 86829}, {"fund": "森林環境整備基金", "amount": 5280, "prev": 500}, {"fund": "地域福祉基金", "amount": 1400, "prev": 1800}, {"fund": "環境衛生基金", "amount": 1000, "prev": 1000}, {"fund": "減債基金", "amount": 0, "prev": 300000}, {"fund": "特別会計からの繰入金", "amount": 3168, "prev": null}], "exp_kan": [{"no": 1, "kan": "議会費", "amount": 186251, "prev": 181559, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 186251, "group": "議会費"}, {"no": 2, "kan": "総務費", "amount": 2331772, "prev": 2159684, "kenkoku": 170073, "chihousai": 8300, "sonota": 151351, "ippan": 2002048, "group": "総務費"}, {"no": 3, "kan": "民生費", "amount": 7211982, "prev": 6838320, "kenkoku": 3303458, "chihousai": 7600, "sonota": 128019, "ippan": 3772905, "group": "民生費"}, {"no": 4, "kan": "衛生費", "amount": 3773752, "prev": 3551026, "kenkoku": 2229210, "chihousai": 1200, "sonota": 163597, "ippan": 1379745, "group": "衛生費"}, {"no": 5, "kan": "労働費", "amount": 71842, "prev": 71845, "kenkoku": 0, "chihousai": 0, "sonota": 70121, "ippan": 1721, "group": "その他の款"}, {"no": 6, "kan": "農林水産業費", "amount": 454367, "prev": 502373, "kenkoku": 86609, "chihousai": 13700, "sonota": 17481, "ippan": 336577, "group": "農林水産業費"}, {"no": 7, "kan": "商工費", "amount": 1062412, "prev": 1412113, "kenkoku": 18750, "chihousai": 0, "sonota": 637158, "ippan": 406504, "group": "商工費"}, {"no": 8, "kan": "土木費", "amount": 2291958, "prev": 1923536, "kenkoku": 357718, "chihousai": 394600, "sonota": 95481, "ippan": 1444159, "group": "土木費"}, {"no": 9, "kan": "消防費", "amount": 525288, "prev": 517465, "kenkoku": 0, "chihousai": 0, "sonota": 23548, "ippan": 501740, "group": "消防費"}, {"no": 10, "kan": "教育費", "amount": 3906327, "prev": 1779321, "kenkoku": 905677, "chihousai": 906900, "sonota": 538632, "ippan": 1555118, "group": "教育費"}, {"no": 11, "kan": "災害復旧費", "amount": 100, "prev": 100, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 100, "group": "その他の款"}, {"no": 12, "kan": "公債費", "amount": 1824819, "prev": 1875858, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 1824819, "group": "公債費"}, {"no": 13, "kan": "諸支出金", "amount": 20932, "prev": 20932, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 20932, "group": "その他の款"}, {"no": 14, "kan": "予備費", "amount": 38198, "prev": 35868, "kenkoku": 0, "chihousai": 0, "sonota": 0, "ippan": 38198, "group": "その他の款"}], "exp_kou": [{"kan": "議会費", "kou": "議会費", "amount": 186251}, {"kan": "総務費", "kou": "総務管理費", "amount": 1779097}, {"kan": "総務費", "kou": "徴税費", "amount": 292575}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "amount": 155767}, {"kan": "総務費", "kou": "選挙費", "amount": 95420}, {"kan": "総務費", "kou": "統計調査費", "amount": 3314}, {"kan": "総務費", "kou": "監査委員費", "amount": 2175}, {"kan": "総務費", "kou": "交通安全費", "amount": 3424}, {"kan": "民生費", "kou": "社会福祉費", "amount": 1822834}, {"kan": "民生費", "kou": "高齢福祉費", "amount": 1607938}, {"kan": "民生費", "kou": "児童福祉費", "amount": 3207957}, {"kan": "民生費", "kou": "生活保護費", "amount": 534575}, {"kan": "民生費", "kou": "災害救助費", "amount": 200}, {"kan": "民生費", "kou": "人権政策費", "amount": 38478}, {"kan": "衛生費", "kou": "保健衛生費", "amount": 2742994}, {"kan": "衛生費", "kou": "清掃費", "amount": 1030758}, {"kan": "労働費", "kou": "労働費", "amount": 71842}, {"kan": "農林水産業費", "kou": "農業費", "amount": 396037}, {"kan": "農林水産業費", "kou": "林業費", "amount": 58330}, {"kan": "商工費", "kou": "商工費", "amount": 1062412}, {"kan": "土木費", "kou": "土木管理費", "amount": 234283}, {"kan": "土木費", "kou": "道路橋梁費", "amount": 942931}, {"kan": "土木費", "kou": "都市計画費", "amount": 1016223}, {"kan": "土木費", "kou": "住宅費", "amount": 98521}, {"kan": "消防費", "kou": "消防費", "amount": 525288}, {"kan": "教育費", "kou": "教育総務費", "amount": 2144268}, {"kan": "教育費", "kou": "小学校費", "amount": 614067}, {"kan": "教育費", "kou": "中学校費", "amount": 238121}, {"kan": "教育費", "kou": "人権同和教育費", "amount": 2644}, {"kan": "教育費", "kou": "社会教育費", "amount": 552305}, {"kan": "教育費", "kou": "保健体育費", "amount": 354922}, {"kan": "災害復旧費", "kou": "農林水産施設災害復旧費", "amount": 50}, {"kan": "災害復旧費", "kou": "公共土木施設災害復旧費", "amount": 50}, {"kan": "公債費", "kou": "公債費", "amount": 1824819}, {"kan": "諸支出金", "kou": "公営企業費", "amount": 20932}, {"kan": "予備費", "kou": "予備費", "amount": 38198}], "projects": [{"kan": "衛生費", "kou": "保健衛生費", "name": "脱炭素先行地域づくり事業", "amount": 2192827, "page": 100, "id": "P001"}, {"kan": "教育費", "kou": "教育総務費", "name": "学校再編事業", "amount": 1835857, "page": 148, "id": "P002"}, {"kan": "公債費", "kou": "公債費", "name": "元金", "amount": 1756382, "page": 180, "id": "P003"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子ども・子育て支援事業", "amount": 1166167, "page": 80, "id": "P004"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者総合支援給付事業", "amount": 1005357, "page": 69, "id": "P005"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童手当", "amount": 825900, "page": 76, "id": "P006"}, {"kan": "総務費", "kou": "総務管理費", "name": "一般管理費人件費", "amount": 695647, "page": 35, "id": "P007"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "介護保険事業特別会計繰出金", "amount": 654673, "page": 74, "id": "P008"}, {"kan": "民生費", "kou": "児童福祉費", "name": "保育所費人件費", "amount": 576254, "page": 80, "id": "P009"}, {"kan": "商工費", "kou": "商工費", "name": "制度融資事業", "amount": 575020, "page": 119, "id": "P010"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "後期高齢者医療広域連合負担金", "amount": 533500, "page": 75, "id": "P011"}, {"kan": "衛生費", "kou": "清掃費", "name": "浅麓環境施設組合運営費分担金", "amount": 485885, "page": 103, "id": "P012"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護等扶助費", "amount": 454656, "page": 89, "id": "P013"}, {"kan": "消防費", "kou": "消防費", "name": "佐久広域連合負担金", "amount": 434703, "page": 142, "id": "P014"}, {"kan": "土木費", "kou": "都市計画費", "name": "公共下水道事業会計繰出金", "amount": 404439, "page": 136, "id": "P015"}, {"kan": "衛生費", "kou": "清掃費", "name": "クリーンヒルこもろ運営事業", "amount": 331645, "page": 105, "id": "P016"}, {"kan": "民生費", "kou": "社会福祉費", "name": "国民健康保険事業特別会計繰出金", "amount": 300772, "page": 66, "id": "P017"}, {"kan": "総務費", "kou": "総務管理費", "name": "ふるさとＰＲ事業", "amount": 292003, "page": 41, "id": "P018"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者福祉医療等給付事業", "amount": 269205, "page": 68, "id": "P019"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "道路メンテナンス事業（老朽化道路インフラ）", "amount": 254000, "page": 132, "id": "P020"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校管理費人件費", "amount": 247259, "page": 152, "id": "P021"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市単道路等整備事業", "amount": 246730, "page": 131, "id": "P022"}, {"kan": "教育費", "kou": "保健体育費", "name": "総合体育館等運営事業", "amount": 222202, "page": 178, "id": "P023"}, {"kan": "民生費", "kou": "児童福祉費", "name": "ひとり親福祉事業", "amount": 211955, "page": 77, "id": "P024"}, {"kan": "教育費", "kou": "社会教育費", "name": "旧小諸本陣建造物保存修理事業", "amount": 205443, "page": 164, "id": "P025"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "後期高齢者医療特別会計繰出金", "amount": 191675, "page": 75, "id": "P026"}, {"kan": "総務費", "kou": "徴税費", "name": "税務総務費人件費", "amount": 183442, "page": 49, "id": "P027"}, {"kan": "民生費", "kou": "児童福祉費", "name": "保育所運営事業", "amount": 174660, "page": 78, "id": "P028"}, {"kan": "総務費", "kou": "総務管理費", "name": "庁舎等管理費", "amount": 168521, "page": 36, "id": "P029"}, {"kan": "土木費", "kou": "土木管理費", "name": "土木総務費人件費", "amount": 163496, "page": 127, "id": "P030"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校給食運営事業", "amount": 148751, "page": 154, "id": "P031"}, {"kan": "衛生費", "kou": "清掃費", "name": "収集運搬運営事業", "amount": 148521, "page": 103, "id": "P032"}, {"kan": "教育費", "kou": "社会教育費", "name": "社会教育総務費人件費", "amount": 144263, "page": 161, "id": "P033"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "予防接種事業", "amount": 132792, "page": 95, "id": "P034"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "保健衛生総務費人件費", "amount": 131702, "page": 94, "id": "P035"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業総務費人件費", "amount": 130074, "page": 108, "id": "P036"}, {"kan": "土木費", "kou": "都市計画費", "name": "中心拠点形成促進事業", "amount": 129111, "page": 136, "id": "P037"}, {"kan": "商工費", "kou": "商工費", "name": "産業団地整備事業特別会計繰出金", "amount": 128239, "page": 121, "id": "P038"}, {"kan": "議会費", "kou": "議会費", "name": "議員報酬等", "amount": 126494, "page": 33, "id": "P039"}, {"kan": "総務費", "kou": "総務管理費", "name": "住民情報システム運用事業", "amount": 119202, "page": 46, "id": "P040"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校管理費運営費", "amount": 118411, "page": 151, "id": "P041"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "都市構造再編集中支援事業（中央西地区）", "amount": 117000, "page": 132, "id": "P042"}, {"kan": "総務費", "kou": "徴税費", "name": "賦課徴収費運営費", "amount": 109133, "page": 50, "id": "P043"}, {"kan": "総務費", "kou": "総務管理費", "name": "庁内情報システム運用事業", "amount": 107817, "page": 47, "id": "P044"}, {"kan": "教育費", "kou": "教育総務費", "name": "事務局人件費", "amount": 107083, "page": 146, "id": "P045"}, {"kan": "商工費", "kou": "商工費", "name": "企業立地推進事業", "amount": 103509, "page": 121, "id": "P046"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童福祉総務費人件費", "amount": 99433, "page": 76, "id": "P047"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市道維持補修事業", "amount": 98391, "page": 129, "id": "P048"}, {"kan": "土木費", "kou": "都市計画費", "name": "公共交通事業", "amount": 97621, "page": 139, "id": "P049"}, {"kan": "土木費", "kou": "住宅費", "name": "住宅管理費運営費", "amount": 93909, "page": 140, "id": "P050"}, {"kan": "教育費", "kou": "教育総務費", "name": "教育支援費人件費", "amount": 88753, "page": 149, "id": "P051"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校管理費人件費", "amount": 88657, "page": 157, "id": "P052"}, {"kan": "土木費", "kou": "都市計画費", "name": "農業集落排水事業会計繰出金", "amount": 88293, "page": 136, "id": "P053"}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "name": "戸籍住民基本台帳費人件費", "amount": 87855, "page": 53, "id": "P054"}, {"kan": "消防費", "kou": "消防費", "name": "非常備消防費運営費", "amount": 87012, "page": 142, "id": "P055"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "高齢者保護支援費", "amount": 85287, "page": 72, "id": "P056"}, {"kan": "商工費", "kou": "商工費", "name": "商工総務費人件費", "amount": 84864, "page": 118, "id": "P057"}, {"kan": "民生費", "kou": "社会福祉費", "name": "社会福祉総務費人件費", "amount": 79901, "page": 63, "id": "P058"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市道除融雪事業", "amount": 74379, "page": 130, "id": "P059"}, {"kan": "土木費", "kou": "都市計画費", "name": "都市計画総務費人件費", "amount": 74093, "page": 134, "id": "P060"}, {"kan": "教育費", "kou": "社会教育費", "name": "図書館運営事業", "amount": 73368, "page": 164, "id": "P061"}, {"kan": "土木費", "kou": "都市計画費", "name": "交通政策費運営費", "amount": 72647, "page": 138, "id": "P062"}, {"kan": "労働費", "kou": "労働費", "name": "労働振興事業", "amount": 71842, "page": 105, "id": "P063"}, {"kan": "総務費", "kou": "総務管理費", "name": "各種団体連携事業", "amount": 70199, "page": 42, "id": "P064"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校管理費運営費", "amount": 70173, "page": 155, "id": "P065"}, {"kan": "公債費", "kou": "公債費", "name": "利子", "amount": 68437, "page": 180, "id": "P066"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "防災・安全社会資本整備交付金事業（舗装修繕）", "amount": 67000, "page": 132, "id": "P067"}, {"kan": "土木費", "kou": "土木管理費", "name": "国土地籍調査事業", "amount": 66619, "page": 128, "id": "P068"}, {"kan": "土木費", "kou": "都市計画費", "name": "都市公園維持管理事業", "amount": 64507, "page": 137, "id": "P069"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "妊産婦等支援事業", "amount": 63617, "page": 98, "id": "P070"}, {"kan": "総務費", "kou": "総務管理費", "name": "市民協働推進事業", "amount": 60451, "page": 40, "id": "P071"}, {"kan": "教育費", "kou": "保健体育費", "name": "国民スポーツ大会開催関係事業", "amount": 57953, "page": 177, "id": "P072"}, {"kan": "教育費", "kou": "教育総務費", "name": "学校運営費人件費", "amount": 56191, "page": 147, "id": "P073"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "健康診査事業", "amount": 55672, "page": 96, "id": "P074"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童施設運営事業", "amount": 55312, "page": 84, "id": "P075"}, {"kan": "農林水産業費", "kou": "農業費", "name": "中山間地域等直接支払事業", "amount": 54652, "page": 111, "id": "P076"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護総務費人件費", "amount": 53320, "page": 87, "id": "P077"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者地域生活支援事業", "amount": 53089, "page": 67, "id": "P078"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "高齢福祉総務費人件費", "amount": 52568, "page": 71, "id": "P079"}, {"kan": "商工費", "kou": "商工費", "name": "移住・定住促進事業", "amount": 47619, "page": 124, "id": "P080"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "高齢福祉総務費運営費", "amount": 46995, "page": 71, "id": "P081"}, {"kan": "教育費", "kou": "保健体育費", "name": "保健体育総務費人件費", "amount": 45750, "page": 176, "id": "P082"}, {"kan": "総務費", "kou": "総務管理費", "name": "車両管理費運営費", "amount": 44484, "page": 45, "id": "P083"}, {"kan": "総務費", "kou": "選挙費", "name": "市議会議員選挙運営費", "amount": 42768, "page": 59, "id": "P084"}, {"kan": "衛生費", "kou": "清掃費", "name": "清掃総務費人件費", "amount": 39883, "page": 102, "id": "P085"}, {"kan": "議会費", "kou": "議会費", "name": "議会事務局人件費", "amount": 39753, "page": 33, "id": "P086"}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "name": "戸籍住民基本台帳費運営費", "amount": 39157, "page": 53, "id": "P087"}, {"kan": "土木費", "kou": "都市計画費", "name": "浄化槽維持管理補助事業", "amount": 38916, "page": 136, "id": "P088"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校施設維持管理事業", "amount": 38216, "page": 153, "id": "P089"}, {"kan": "予備費", "kou": "予備費", "name": "予備費", "amount": 38198, "page": 181, "id": "P090"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "環境衛生費人件費", "amount": 37702, "page": 100, "id": "P091"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市単交通安全通学路整備事業", "amount": 37000, "page": 132, "id": "P092"}, {"kan": "教育費", "kou": "社会教育費", "name": "文化センター運営事業", "amount": 36899, "page": 167, "id": "P093"}, {"kan": "農林水産業費", "kou": "農業費", "name": "土地改良事業", "amount": 35020, "page": 113, "id": "P094"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "地域医療体制整備事業", "amount": 34898, "page": 95, "id": "P095"}, {"kan": "商工費", "kou": "商工費", "name": "商工業総合振興事業", "amount": 34086, "page": 119, "id": "P096"}, {"kan": "民生費", "kou": "社会福祉費", "name": "自立相談支援事業", "amount": 33256, "page": 65, "id": "P097"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校ＩＣＴ教育推進事業", "amount": 32548, "page": 155, "id": "P098"}, {"kan": "商工費", "kou": "商工費", "name": "観光地域づくり事業", "amount": 32345, "page": 125, "id": "P099"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者援助事業", "amount": 31256, "page": 68, "id": "P100"}, {"kan": "農林水産業費", "kou": "林業費", "name": "森林環境整備事業", "amount": 30762, "page": 117, "id": "P101"}, {"kan": "総務費", "kou": "総務管理費", "name": "結婚支援事業", "amount": 30730, "page": 44, "id": "P102"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子どもセンター運営事業", "amount": 29984, "page": 81, "id": "P103"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校施設維持管理事業", "amount": 29100, "page": 157, "id": "P104"}, {"kan": "教育費", "kou": "小学校費", "name": "小学校教育振興支援事業", "amount": 28882, "page": 154, "id": "P105"}, {"kan": "総務費", "kou": "戸籍住民基本台帳費", "name": "マイナンバーカード普及促進事業", "amount": 28755, "page": 54, "id": "P106"}, {"kan": "総務費", "kou": "総務管理費", "name": "財政調整基金等積立金", "amount": 27557, "page": 38, "id": "P107"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業用施設維持補修事業", "amount": 27000, "page": 114, "id": "P108"}, {"kan": "教育費", "kou": "教育総務費", "name": "学校運営費", "amount": 26923, "page": 146, "id": "P109"}, {"kan": "教育費", "kou": "社会教育費", "name": "文化財保護活用事業", "amount": 25460, "page": 162, "id": "P110"}, {"kan": "総務費", "kou": "総務管理費", "name": "防犯事業", "amount": 25097, "page": 37, "id": "P111"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校教育振興支援事業", "amount": 24538, "page": 158, "id": "P112"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "環境衛生費運営費", "amount": 23757, "page": 100, "id": "P113"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "交通安全対策補助事業（通学路緊急対策）", "amount": 23000, "page": 132, "id": "P114"}, {"kan": "農林水産業費", "kou": "林業費", "name": "野生鳥獣保護・管理事業", "amount": 22896, "page": 115, "id": "P115"}, {"kan": "総務費", "kou": "総務管理費", "name": "会計管理事務", "amount": 22792, "page": 39, "id": "P116"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童クラブ運営事業", "amount": 22227, "page": 83, "id": "P117"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農産物ブランド化事業", "amount": 21393, "page": 112, "id": "P118"}, {"kan": "諸支出金", "kou": "公営企業費", "name": "水道事業会計繰出金", "amount": 20932, "page": 180, "id": "P119"}, {"kan": "民生費", "kou": "社会福祉費", "name": "国保・年金事業費人件費", "amount": 20586, "page": 65, "id": "P120"}, {"kan": "教育費", "kou": "社会教育費", "name": "高原美術館・白鳥映雪館運営事業", "amount": 20584, "page": 170, "id": "P121"}, {"kan": "総務費", "kou": "選挙費", "name": "県知事選挙運営費", "amount": 20573, "page": 56, "id": "P122"}, {"kan": "議会費", "kou": "議会費", "name": "議会運営費", "amount": 20004, "page": 32, "id": "P123"}, {"kan": "民生費", "kou": "人権政策費", "name": "人権同和政策総務費人件費", "amount": 19550, "page": 90, "id": "P124"}, {"kan": "民生費", "kou": "社会福祉費", "name": "社会福祉総務費運営費", "amount": 19434, "page": 63, "id": "P125"}, {"kan": "総務費", "kou": "総務管理費", "name": "広報広聴事業", "amount": 19253, "page": 43, "id": "P126"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "生きがい対策支援事業", "amount": 19037, "page": 74, "id": "P127"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業委員会運営費", "amount": 18788, "page": 106, "id": "P128"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子ども家庭支援事業", "amount": 18779, "page": 85, "id": "P129"}, {"kan": "総務費", "kou": "選挙費", "name": "県議会議員選挙運営費", "amount": 18247, "page": 58, "id": "P130"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "環境対策費運営費", "amount": 17972, "page": 98, "id": "P131"}, {"kan": "総務費", "kou": "総務管理費", "name": "一般管理費運営費", "amount": 17891, "page": 34, "id": "P132"}, {"kan": "農林水産業費", "kou": "農業費", "name": "土地改良区等補助金交付事業", "amount": 17211, "page": 114, "id": "P133"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "母子保健事業", "amount": 16603, "page": 97, "id": "P134"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業農村振興事業", "amount": 16564, "page": 109, "id": "P135"}, {"kan": "土木費", "kou": "都市計画費", "name": "県街路事業", "amount": 16500, "page": 137, "id": "P136"}, {"kan": "商工費", "kou": "商工費", "name": "まちなか活性化施設運営事業", "amount": 15720, "page": 120, "id": "P137"}, {"kan": "農林水産業費", "kou": "農業費", "name": "多面的機能支払交付金事業", "amount": 15635, "page": 114, "id": "P138"}, {"kan": "商工費", "kou": "商工費", "name": "小諸公園事業特別会計繰出金", "amount": 15500, "page": 125, "id": "P139"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "道路台帳補正業務費", "amount": 15431, "page": 129, "id": "P140"}, {"kan": "農林水産業費", "kou": "農業費", "name": "県営農業農村整備事業", "amount": 15331, "page": 113, "id": "P141"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "保健衛生総務費運営費", "amount": 14813, "page": 93, "id": "P142"}, {"kan": "衛生費", "kou": "清掃費", "name": "清掃総務費運営費", "amount": 14261, "page": 102, "id": "P143"}, {"kan": "商工費", "kou": "商工費", "name": "観光振興事業", "amount": 13900, "page": 121, "id": "P144"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農村資源活用施設管理事業", "amount": 13552, "page": 110, "id": "P145"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校給食運営事業", "amount": 13193, "page": 158, "id": "P146"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護適正実施推進事業", "amount": 13049, "page": 88, "id": "P147"}, {"kan": "総務費", "kou": "総務管理費", "name": "防災情報基盤整備・運用事業", "amount": 12784, "page": 49, "id": "P148"}, {"kan": "教育費", "kou": "中学校費", "name": "中学校ＩＣＴ教育推進事業", "amount": 12460, "page": 159, "id": "P149"}, {"kan": "民生費", "kou": "人権政策費", "name": "隣保館運営事業", "amount": 12270, "page": 91, "id": "P150"}, {"kan": "民生費", "kou": "児童福祉費", "name": "自治体フロントヤード改革モデルプロジェクト事業", "amount": 12032, "page": 77, "id": "P151"}, {"kan": "教育費", "kou": "教育総務費", "name": "原油価格・物価高騰対応事業", "amount": 12000, "page": 148, "id": "P152"}, {"kan": "総務費", "kou": "総務管理費", "name": "職員厚生費", "amount": 11768, "page": 45, "id": "P153"}, {"kan": "総務費", "kou": "選挙費", "name": "選挙管理委員会人件費", "amount": 11611, "page": 56, "id": "P154"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "在宅福祉サービス事業", "amount": 11167, "page": 72, "id": "P155"}, {"kan": "総務費", "kou": "総務管理費", "name": "財産管理費運営費", "amount": 10869, "page": 44, "id": "P156"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "高峯聖地公園費運営費", "amount": 10813, "page": 101, "id": "P157"}, {"kan": "教育費", "kou": "社会教育費", "name": "小山敬三美術館運営事業", "amount": 10469, "page": 169, "id": "P158"}, {"kan": "農林水産業費", "kou": "農業費", "name": "機構集積支援事業", "amount": 10130, "page": 107, "id": "P159"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業人材育成事業", "amount": 10016, "page": 111, "id": "P160"}, {"kan": "土木費", "kou": "道路橋梁費", "name": "市単河川整備事業", "amount": 10000, "page": 132, "id": "P161"}, {"kan": "土木費", "kou": "都市計画費", "name": "浄化槽設置整備事業", "amount": 9756, "page": 135, "id": "P162"}, {"kan": "商工費", "kou": "商工費", "name": "観光施設運営事業", "amount": 9710, "page": 123, "id": "P163"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護総務費運営費", "amount": 9043, "page": 87, "id": "P164"}, {"kan": "総務費", "kou": "総務管理費", "name": "文書費", "amount": 8635, "page": 37, "id": "P165"}, {"kan": "土木費", "kou": "都市計画費", "name": "下水道環境費人件費", "amount": 8127, "page": 135, "id": "P166"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農地保全協働事業", "amount": 7974, "page": 114, "id": "P167"}, {"kan": "教育費", "kou": "教育総務費", "name": "部活動地域移行事業", "amount": 7293, "page": 149, "id": "P168"}, {"kan": "教育費", "kou": "保健体育費", "name": "大栄小諸球場運営事業", "amount": 7225, "page": 178, "id": "P169"}, {"kan": "教育費", "kou": "保健体育費", "name": "体育施設運営費", "amount": 6749, "page": 177, "id": "P170"}, {"kan": "総務費", "kou": "総務管理費", "name": "市民活動支援事業", "amount": 6535, "page": 41, "id": "P171"}, {"kan": "土木費", "kou": "都市計画費", "name": "小諸駅周辺駐車場管理事業", "amount": 6455, "page": 139, "id": "P172"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "人間ドック補助金", "amount": 6284, "page": 75, "id": "P173"}, {"kan": "衛生費", "kou": "清掃費", "name": "廃棄物減量リサイクル事業", "amount": 6277, "page": 104, "id": "P174"}, {"kan": "民生費", "kou": "児童福祉費", "name": "子育て支援総務費運営費", "amount": 6241, "page": 86, "id": "P175"}, {"kan": "民生費", "kou": "児童福祉費", "name": "児童発達支援事業運営費", "amount": 6200, "page": 81, "id": "P176"}, {"kan": "総務費", "kou": "総務管理費", "name": "防災対策費運営費", "amount": 5950, "page": 48, "id": "P177"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "介護予防事業", "amount": 5773, "page": 73, "id": "P178"}, {"kan": "総務費", "kou": "総務管理費", "name": "秘書事務費", "amount": 5673, "page": 40, "id": "P179"}, {"kan": "民生費", "kou": "人権政策費", "name": "人権同和政策総務費運営費", "amount": 5369, "page": 89, "id": "P180"}, {"kan": "総務費", "kou": "総務管理費", "name": "公共施設マネジメント事業", "amount": 5295, "page": 38, "id": "P181"}, {"kan": "教育費", "kou": "社会教育費", "name": "支館・分館支援事業", "amount": 5085, "page": 166, "id": "P182"}, {"kan": "総務費", "kou": "総務管理費", "name": "普通財産管理費", "amount": 5072, "page": 44, "id": "P183"}, {"kan": "教育費", "kou": "保健体育費", "name": "保健体育総務費運営費", "amount": 4579, "page": 174, "id": "P184"}, {"kan": "民生費", "kou": "生活保護費", "name": "生活保護受給者就労支援事業", "amount": 4507, "page": 88, "id": "P185"}, {"kan": "衛生費", "kou": "清掃費", "name": "塵芥処理施設管理事業", "amount": 4286, "page": 104, "id": "P186"}, {"kan": "農林水産業費", "kou": "林業費", "name": "林業振興事業", "amount": 4172, "page": 115, "id": "P187"}, {"kan": "教育費", "kou": "保健体育費", "name": "天池総合運動場運営事業", "amount": 4172, "page": 179, "id": "P188"}, {"kan": "土木費", "kou": "土木管理費", "name": "土木総務費運営費", "amount": 4168, "page": 126, "id": "P189"}, {"kan": "教育費", "kou": "保健体育費", "name": "スポーツ大会等運営事業", "amount": 4092, "page": 175, "id": "P190"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "健康づくり事業", "amount": 3924, "page": 96, "id": "P191"}, {"kan": "教育費", "kou": "社会教育費", "name": "高濱虚子記念館運営事業", "amount": 3902, "page": 173, "id": "P192"}, {"kan": "教育費", "kou": "社会教育費", "name": "藤村記念館運営事業", "amount": 3820, "page": 172, "id": "P193"}, {"kan": "教育費", "kou": "社会教育費", "name": "小諸藤村文学賞事業", "amount": 3797, "page": 162, "id": "P194"}, {"kan": "教育費", "kou": "社会教育費", "name": "公民館報発行事業", "amount": 3586, "page": 166, "id": "P195"}, {"kan": "消防費", "kou": "消防費", "name": "消防施設費運営費", "amount": 3573, "page": 144, "id": "P196"}, {"kan": "教育費", "kou": "教育総務費", "name": "特別支援教育等推進事業", "amount": 3427, "page": 150, "id": "P197"}, {"kan": "教育費", "kou": "社会教育費", "name": "史料館等管理事業", "amount": 3373, "page": 163, "id": "P198"}, {"kan": "総務費", "kou": "総務管理費", "name": "行政経営事業", "amount": 3361, "page": 39, "id": "P199"}, {"kan": "総務費", "kou": "統計調査費", "name": "統計調査事業", "amount": 3314, "page": 60, "id": "P200"}, {"kan": "教育費", "kou": "教育総務費", "name": "教育委員会運営費", "amount": 3261, "page": 144, "id": "P201"}, {"kan": "民生費", "kou": "社会福祉費", "name": "社会事業授産施設事業費運営費", "amount": 3200, "page": 70, "id": "P202"}, {"kan": "土木費", "kou": "都市計画費", "name": "都市計画総務費運営費", "amount": 3033, "page": 133, "id": "P203"}, {"kan": "民生費", "kou": "児童福祉費", "name": "青少年育成補導推進事業", "amount": 2813, "page": 85, "id": "P204"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "乳幼児健診事業", "amount": 2751, "page": 98, "id": "P205"}, {"kan": "土木費", "kou": "都市計画費", "name": "景観まちづくり事業", "amount": 2725, "page": 134, "id": "P206"}, {"kan": "教育費", "kou": "社会教育費", "name": "自主公演事業", "amount": 2675, "page": 168, "id": "P207"}, {"kan": "教育費", "kou": "人権同和教育費", "name": "人権同和教育推進事業", "amount": 2644, "page": 159, "id": "P208"}, {"kan": "土木費", "kou": "住宅費", "name": "住宅耐震化事業", "amount": 2610, "page": 141, "id": "P209"}, {"kan": "民生費", "kou": "社会福祉費", "name": "消費者行政事業", "amount": 2531, "page": 70, "id": "P210"}, {"kan": "教育費", "kou": "社会教育費", "name": "音楽のまち・こもろ推進事業", "amount": 2403, "page": 164, "id": "P211"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "狂犬病予防事業", "amount": 2232, "page": 101, "id": "P212"}, {"kan": "総務費", "kou": "選挙費", "name": "選挙管理委員会運営費", "amount": 2221, "page": 55, "id": "P213"}, {"kan": "教育費", "kou": "社会教育費", "name": "公民館運営事業", "amount": 2206, "page": 165, "id": "P214"}, {"kan": "総務費", "kou": "監査委員費", "name": "監査委員運営費", "amount": 2175, "page": 61, "id": "P215"}, {"kan": "民生費", "kou": "社会福祉費", "name": "障害者援護費運営費", "amount": 2082, "page": 66, "id": "P216"}, {"kan": "総務費", "kou": "交通安全費", "name": "交通安全対策事業", "amount": 2026, "page": 62, "id": "P217"}, {"kan": "商工費", "kou": "商工費", "name": "布引温泉管理事業", "amount": 1900, "page": 120, "id": "P218"}, {"kan": "教育費", "kou": "社会教育費", "name": "学級・講座等開催事業", "amount": 1712, "page": 166, "id": "P219"}, {"kan": "教育費", "kou": "社会教育費", "name": "社会教育総務費運営費", "amount": 1629, "page": 160, "id": "P220"}, {"kan": "教育費", "kou": "教育総務費", "name": "教育支援センター等運営事業", "amount": 1580, "page": 150, "id": "P221"}, {"kan": "総務費", "kou": "交通安全費", "name": "県民交通災害共済事務", "amount": 1398, "page": 62, "id": "P222"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農地費運営費", "amount": 1263, "page": 112, "id": "P223"}, {"kan": "教育費", "kou": "社会教育費", "name": "小諸義塾記念館運営事業", "amount": 1151, "page": 172, "id": "P224"}, {"kan": "土木費", "kou": "住宅費", "name": "住宅新築資金等貸付事業", "amount": 1106, "page": 140, "id": "P225"}, {"kan": "農林水産業費", "kou": "農業費", "name": "畜産振興事業", "amount": 1070, "page": 110, "id": "P226"}, {"kan": "教育費", "kou": "教育総務費", "name": "事務局運営費", "amount": 1008, "page": 145, "id": "P227"}, {"kan": "民生費", "kou": "人権政策費", "name": "男女共同参画推進事業", "amount": 994, "page": 91, "id": "P228"}, {"kan": "民生費", "kou": "高齢福祉費", "name": "社会福祉施設建設工事等助成事業", "amount": 979, "page": 74, "id": "P229"}, {"kan": "衛生費", "kou": "保健衛生費", "name": "精神保健福祉事業", "amount": 919, "page": 95, "id": "P230"}, {"kan": "土木費", "kou": "住宅費", "name": "特定空家対策事業", "amount": 896, "page": 141, "id": "P231"}, {"kan": "総務費", "kou": "総務管理費", "name": "職員研修費", "amount": 893, "page": 46, "id": "P232"}, {"kan": "教育費", "kou": "教育総務費", "name": "姉妹都市教育委員等連携事業", "amount": 892, "page": 145, "id": "P233"}, {"kan": "教育費", "kou": "保健体育費", "name": "スポーツ推進委員会運営事業", "amount": 864, "page": 175, "id": "P234"}, {"kan": "教育費", "kou": "保健体育費", "name": "学校開放事業", "amount": 792, "page": 176, "id": "P235"}, {"kan": "民生費", "kou": "社会福祉費", "name": "行旅扶助厚生費", "amount": 622, "page": 64, "id": "P236"}, {"kan": "民生費", "kou": "社会福祉費", "name": "市民相談事業", "amount": 604, "page": 70, "id": "P237"}, {"kan": "教育費", "kou": "保健体育費", "name": "高地トレーニング等推進事業", "amount": 544, "page": 176, "id": "P238"}, {"kan": "民生費", "kou": "社会福祉費", "name": "総合福祉センター運営費", "amount": 511, "page": 64, "id": "P239"}, {"kan": "農林水産業費", "kou": "林業費", "name": "森林（もり）の里親事業", "amount": 500, "page": 116, "id": "P240"}, {"kan": "教育費", "kou": "社会教育費", "name": "二十歳を祝う会開催事業", "amount": 480, "page": 167, "id": "P241"}, {"kan": "民生費", "kou": "社会福祉費", "name": "国保・年金事業費運営費", "amount": 428, "page": 65, "id": "P242"}, {"kan": "総務費", "kou": "総務管理費", "name": "財政管理費運営費", "amount": 404, "page": 38, "id": "P243"}, {"kan": "農林水産業費", "kou": "農業費", "name": "農業総務費運営費", "amount": 364, "page": 108, "id": "P244"}, {"kan": "民生費", "kou": "人権政策費", "name": "多文化共生推進事業", "amount": 295, "page": 93, "id": "P245"}, {"kan": "総務費", "kou": "総務管理費", "name": "小諸市等公平委員会特別会計繰出金", "amount": 214, "page": 38, "id": "P246"}, {"kan": "民生費", "kou": "災害救助費", "name": "災害救助費", "amount": 200, "page": 89, "id": "P247"}, {"kan": "災害復旧費", "kou": "農林水産施設災害復旧費", "name": "農地農業用施設単独災害復旧事", "amount": 50, "page": 179, "id": "P248"}, {"kan": "災害復旧費", "kou": "公共土木施設災害復旧費", "name": "単独公共土木施設災害復旧事業", "amount": 50, "page": 180, "id": "P249"}], "population": [{"date": "2026-04-01", "population": 40800, "basis": "住民基本台帳（小諸市区別世帯人口表）"}]});</script>
-<style>
-#dash-root { --km-font: var(--font-anthropic-sans), "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif; }
-.km { font-family: var(--km-font); color: var(--color-fg); font-size: var(--cds-font-size-body); line-height: 1.7; max-width: 82rem; margin-inline: auto; }
-.km h1 { font-family: var(--font-anthropic-serif), "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.3; margin: 0; }
-.km h1 small { font-family: var(--km-font); font-size: var(--cds-font-size-body); color: var(--color-fg-muted); margin-left: var(--cds-gap-sm); }
-.km h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); line-height: 1.4; }
-.km-lead { margin: var(--cds-gap-sm) 0 var(--cds-gap-md); max-width: 60rem; }
-.km .km-lead b, .km .km-num b { font-weight: 600; font-variant-numeric: tabular-nums; }
-.km-disclaimer { border: 1px solid var(--color-border-line); border-left: 4px solid var(--color-warn); background: var(--color-panel); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-md); }
-.km-disclaimer strong { color: var(--color-fg); }
-.km-tabs { display: flex; gap: var(--cds-gap-xs); flex-wrap: wrap; border-bottom: 1px solid var(--color-border-line); margin-bottom: var(--cds-gap-md); }
-.km-tab { font: inherit; background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-xs) var(--cds-pad-md); color: var(--color-fg-muted); cursor: pointer; }
-.km-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
-.km-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-md); }
-.km-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
-.km-stat .k { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-stat .v { font-family: var(--font-anthropic-serif), serif; font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.25; font-variant-numeric: tabular-nums; }
-.km-stat .v small { font-family: var(--km-font); font-size: var(--cds-font-size-body); margin-left: 2px; }
-.km-stat .s { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-sm); }
-.km-flowgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem); gap: var(--cds-gap-md); align-items: start; margin-bottom: var(--cds-gap-md); }
-@media (max-width: 62rem) { .km-flowgrid { grid-template-columns: minmax(0, 1fr); } }
-.km-scroll { overflow-x: auto; }
-.km-sankey { position: relative; min-height: 560px; width: 100%; }
-.km-sankey svg { display: block; }
-.km-sankey .node { cursor: pointer; }
-.km-sankey .lbl { font-size: 12px; fill: var(--color-fg); font-family: var(--km-font); }
-.km-sankey .lbl .amt { fill: var(--color-fg-muted); }
-.km-sankey .mid { paint-order: stroke; stroke: var(--color-panel); stroke-width: 4px; stroke-linejoin: round; font-weight: 600; }
-.km-sankey .link { transition: opacity var(--cds-dur-slow); }
-.km-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); max-width: 16rem; z-index: 2; }
-.km-tip .t { color: var(--cds-text-secondary); }
-.km-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: var(--cds-gap-sm); }
-.km-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
-.km-legend .dash { display: inline-block; width: 16px; border-top: 2px dashed var(--color-fg-muted); margin-right: 4px; vertical-align: 3px; }
-.km-btn { font: inherit; font-size: var(--cds-font-size-caption); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 2px 12px; cursor: pointer; }
-.km-btn:hover { border-color: var(--color-fg-muted); }
-.km-panel { position: sticky; top: var(--cds-gap-md); max-height: calc(100vh - 2rem); overflow: auto; }
-.km-panel .eyebrow { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-panel .big { font-family: var(--font-anthropic-serif), serif; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.3; }
-.km-panel h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
-.km-panel p { margin: var(--cds-gap-xs) 0; }
-.km-rows { list-style: none; margin: 0; padding: 0; }
-.km-rows li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--cds-gap-sm); padding: 4px 0; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); }
-.km-rows li .n { overflow-wrap: anywhere; }
-.km-rows li .a { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-.km-rows li .bar { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--cds-chart-muted); }
-.km-stack { display: flex; height: 14px; border-radius: var(--cds-radius); overflow: hidden; margin: var(--cds-gap-xs) 0; }
-.km-up { color: var(--color-ok); } .km-down { color: var(--color-bad); }
-.km-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
-.km-diff { position: relative; width: 100%; min-height: 200px; }
-.km-diff text { font-size: 12px; fill: var(--color-fg); font-family: var(--km-font); }
-.km-diff .muted { fill: var(--color-fg-muted); }
-.km-ptools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; margin-bottom: var(--cds-gap-sm); }
-.km-ptools input { font: inherit; padding: 4px 10px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); min-width: min(100%, 18rem); }
-.km-ptools .dash-select { height: 2rem; }
-.km-count { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.km-tablebox { max-height: 70vh; overflow: auto; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
-.km-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
-.km-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; }
-.km-table th button { font: inherit; font-weight: var(--cds-font-weight-medium); background: none; border: 0; color: var(--color-fg); padding: 6px 10px; cursor: pointer; width: 100%; text-align: inherit; }
-.km-table td { padding: 6px 10px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
-.km-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.km-table td.num .cb { height: 3px; border-radius: 2px; background: var(--cds-chart-muted); margin-top: 3px; margin-left: auto; }
-@media (max-width: 40rem) { .km-table .hide-narrow { display: none; } }
-.km-about { max-width: 48rem; }
-.km-about h2 { margin-top: var(--cds-gap-lg); }
-.km-about dt { font-weight: var(--cds-font-weight-medium); margin-top: var(--cds-gap-sm); }
-.km-about dd { margin: 0 0 0 1em; }
-.km-about li { margin-bottom: var(--cds-gap-xs); }
-.km a { color: inherit; text-underline-offset: 2px; }
-[data-dash-source-state=empty] { color: transparent; }
-[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-</style>
 
 <div class="km">
-  <header>
-    <h1 id="top">まるわかり 小諸市予算<small>令和8年度 一般会計 当初予算</small></h1>
-    <p class="km-lead">令和8年度の小諸市一般会計の当初予算は <b data-draw="s-total" data-source="c_summary" data-field="total_oku">—</b>億円。前年度より <b data-draw="s-diff" data-source="c_summary" data-field="diff_oku">—</b>億円（<b data-draw="s-pct" data-source="c_summary" data-field="pct">—</b>%）大きくなりました。いちばん増えたのは <b data-draw="s-upkan" data-source="c_summary" data-field="top_up_kan">—</b>（<b data-draw="s-upoku" data-source="c_summary" data-field="top_up_oku">—</b>億円増）です。</p>
-    <div class="km-disclaimer"><strong>小諸市の公式サイトではありません。</strong>小諸市が公開している「令和8年度一般会計当初予算書」の数字をもとに、個人が作成した非公式のページです。数字は当初予算（年度はじめの計画）で、年度途中の補正予算や実際に使った額（決算）とは異なります。正確な数字は必ず出典の資料でご確認ください。</div>
-  </header>
-
-  <nav class="km-tabs" role="tablist" aria-label="ページ切り替え">
-    <button class="km-tab" role="tab" type="button" data-tab="flow" aria-selected="true">お金の流れ</button>
-    <button class="km-tab" role="tab" type="button" data-tab="change" aria-selected="false">前年度との違い</button>
-    <button class="km-tab" role="tab" type="button" data-tab="jigyo" aria-selected="false">事業一覧</button>
-    <button class="km-tab" role="tab" type="button" data-tab="about" aria-selected="false">説明と出典</button>
+  <header class="km-top">
+    <div class="km-top-inner">
+      <span class="km-brand">まるっと予算ナビ@小諸 <span class="km-badge">β版</span></span>
+      <nav class="km-tabs" role="tablist" aria-label="ページ切り替え">
+    <button class="km-tab" role="tab" type="button" data-tab="flow" data-mode="komoro" aria-selected="true">小諸の予算</button>
+    <button class="km-tab" role="tab" type="button" data-tab="kinrin" data-mode="kinrin" aria-selected="false">近隣と比べる</button>
+    <button class="km-tab" role="tab" type="button" data-tab="ruiji" data-mode="ruiji" aria-selected="false">似た市と比べる</button>
+    <button class="km-tab" role="tab" type="button" data-tab="about" data-mode="about" aria-selected="false">説明と出典</button>
   </nav>
+    </div>
+  </header>
+  <section class="km-head" data-mode-only="komoro">
+    <h1 id="top">令和8年度 小諸市 一般会計 当初予算</h1>
+    <p class="km-meta">小諸市「令和8年度一般会計当初予算書」から作成</p>
+    <p class="km-lead">令和8年度の小諸市一般会計の当初予算は <b data-draw="s-total" data-source="c_summary" data-field="total_oku">—</b>億円。前年度より <b data-draw="s-diff" data-source="c_summary" data-field="diff_oku">—</b>億円（<b data-draw="s-pct" data-source="c_summary" data-field="pct">—</b>%）大きくなりました。いちばん増えたのは <b data-draw="s-upkan" data-source="c_summary" data-field="top_up_kan">—</b>（<b data-draw="s-upoku" data-source="c_summary" data-field="top_up_oku">—</b>億円増）です。</p>
+    <div class="km-disclaimer"><strong>β版・非公式</strong>　小諸市の公式サイトではありません。小諸市が公開している「令和8年度一般会計当初予算書」の数字をもとに、個人が作成した非公式のページです。数字は当初予算（年度はじめの計画）で、年度途中の補正予算や実際に使った額（決算）とは異なります。正確な数字は必ず出典の資料でご確認ください。</div>
+  </section>
 
+  <nav class="km-subtabs" data-mode-only="komoro" aria-label="小諸の予算の表示切り替え">
+    <button class="km-subtab" type="button" data-tab="flow" aria-pressed="true">お金の流れ</button>
+    <button class="km-subtab" type="button" data-tab="change" aria-pressed="false">前年度との違い</button>
+    <button class="km-subtab" type="button" data-tab="jigyo" aria-pressed="false">事業一覧</button>
+  </nav>
   <section id="flow" data-section="flow">
     <div class="km-stats">
       <div class="km-card km-stat"><div class="k">一般会計 当初予算</div><div class="v"><span data-draw="s-total2" data-source="c_summary" data-field="total_oku">—</span><small>億円</small></div><div class="s">前年度比 <span data-draw="s-diff2" data-source="c_summary" data-field="diff_oku">—</span>億円</div></div>
@@ -170,6 +263,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
       <div class="km-card">
         <h2 id="sankey">どこから入って、何に使われるか</h2>
         <p class="km-note">左が収入（歳入）、まん中が使い道の自由度、右が目的別の支出（歳出の款）。四角を押すとその流れだけが強調され、右側に内訳が出ます。</p>
+        <p class="km-swipe">図は横にスクロールできます →</p>
         <div class="km-scroll"><div class="km-sankey" data-draw="sankey" data-source="c_flows">—</div></div>
         <div class="km-legend">
           <span><span class="sw" data-draw="sw0">—</span>一般財源（使い道が自由）</span>
@@ -226,9 +320,26 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
     </div>
   </section>
 
+  <section id="kinrin" data-section="kinrin" hidden>
+    <div class="km-head">
+      <h1>近隣の市町と比べる</h1>
+      <p class="km-meta">総務省「市町村別決算状況調」令和2〜6年度（決算・普通会計）から作成</p>
+      <p class="km-lead">佐久地域とその周りの6市町と、小諸市の決算を並べました。予算（計画）ではなく、実際に使った額（決算）の比較です。</p>
+      <div class="km-disclaimer"><strong>読むときの注意</strong>　町（軽井沢町・御代田町・立科町）は、市とは人口の規模も、国の区分も違います。とくに軽井沢町は別荘地を抱え、税収の構造が大きく異なります。1人あたりの金額は住民基本台帳の人口で割っているため、住民票を置かない滞在者の多い町では大きめに出ます。</div>
+    </div>
+    <div class="km-cmp" data-draw="cmp-kinrin">—</div>
+  </section>
+  <section id="ruiji" data-section="ruiji" hidden>
+    <div class="km-head">
+      <h1>似た市と比べる</h1>
+      <p class="km-meta">総務省「市町村別決算状況調」令和2〜6年度（決算・普通会計）から作成</p>
+      <p class="km-lead">人口・面積・産業の形・財政の強さが小諸市に近い全国の4市と、決算を並べました。予算（計画）ではなく、実際に使った額（決算）の比較です。</p>
+    </div>
+    <div class="km-cmp" data-draw="cmp-ruiji">—</div>
+  </section>
   <section id="about" data-section="about" class="km-about" hidden>
     <h2>このページについて</h2>
-    <p>小諸市の令和8年度一般会計当初予算が、どこから入り、何に使われるのかを一枚の図で見られるようにしたものです。数字はすべて小諸市が公開している予算書から取っています。<strong>小諸市の公式サイトではなく、市・市議会・政党などの公式な資料でもありません。</strong></p>
+    <p>小諸市の令和8年度一般会計当初予算が、どこから入り、何に使われるのかを一枚の図で見られるようにしたものです。あわせて、近隣の市町や、全国の似た市と決算を比べられるようにしました。数字はすべて小諸市と総務省が公開している資料から取っています。<strong>小諸市の公式サイトではなく、市・市議会・政党などの公式な資料でもありません。</strong></p>
     <p>作成：山田ゆうじ（小諸市在住）。数字の誤りに気づいたら、<a href="https://github.com/thunder-19900512/komoro-budget/issues" target="_blank" rel="noopener">GitHubのIssues</a>でお知らせください。</p>
 
     <h2>図の読み方</h2>
@@ -250,16 +361,29 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
       <li>特別会計（国民健康保険・介護保険など）と公営企業会計（水道・下水道）は含んでいません。</li>
     </ul>
 
+    <h2>「近隣と比べる」「似た市と比べる」について</h2>
+    <ul>
+      <li>数字はすべて、総務省「市町村別決算状況調」（令和2〜6年度）から取りました。予算（計画）ではなく、実際に使った額（決算）です。会計の範囲は「普通会計」（一般会計に一部の特別会計を合わせ、全国で比べられるように組み直したもの）で、「小諸の予算」タブの一般会計とは範囲が少し違います。</li>
+      <li>1人あたりの金額は、各年度の表に載っている住民基本台帳の人口（翌年1月1日）で割りました。</li>
+      <li>「似た市」は、総務省が財政を比べるために使うグループ（類似団体区分）のうち、小諸市と同じ「都市Ⅰ－１」の中から、地形（内陸）、人口と面積、財政力指数と人口の減り方が近い順に選びました。選び方の詳しい手順と、候補になった市の一覧は<a href="https://github.com/thunder-19900512/komoro-budget/blob/main/docs/hikaku.md" target="_blank" rel="noopener">こちら（GitHub）</a>にあります。</li>
+      <li>「同じ区分の中央値」は、令和6年度の類似団体別市町村財政指数表で総務省が平均の計算に使った市について、このページが計算した値です。総務省の公表値ではありません。</li>
+      <li>高齢化率は、総務省「住民基本台帳年齢階級別人口」（令和7年1月1日）から計算しました。</li>
+      <li>比較の数字は、団体ごとの事情（広域連合に任せている仕事、学校の建て替えの時期、観光地や別荘地の有無など）で大きく変わります。数字の大小だけで、良い・悪いは決まりません。</li>
+    </ul>
     <h2>出典</h2>
     <ul>
       <li><a href="https://www.city.komoro.lg.jp/soshikikarasagasu/somubu/zaiseika/3/2/3/17447.html" target="_blank" rel="noopener">令和8年度当初予算（小諸市 総務部 財政課）</a> — 令和8年度一般会計当初予算書（PDF）</li>
       <li><a href="https://www.city.komoro.lg.jp/official/shisei_machizukuri/gyoseijoho/tokeichosa/4819.html" target="_blank" rel="noopener">小諸市の人口（詳細）（小諸市 市民課）</a> — 区別世帯人口表</li>
       <li><a href="https://www.city.komoro.lg.jp/soshikikarasagasu/gikaijimukyoku/shisei_machizukuri/2/7/gianR07_1/17254.html" target="_blank" rel="noopener">令和8年3月定例会 提出議案等一覧（小諸市議会）</a></li>
+      <li><a href="https://www.soumu.go.jp/iken/kessan_jokyo_2.html" target="_blank" rel="noopener">市町村別決算状況調（総務省）</a> — 令和2〜6年度の都市別・町村別（概況・歳入・目的別歳出・性質別歳出・地方債現在高等）</li>
+      <li><a href="https://www.soumu.go.jp/iken/ruiji/ruijiR06.html" target="_blank" rel="noopener">令和6年度 類似団体別市町村財政指数表（総務省）</a> — 類似団体区分と、平均の計算に使った団体</li>
+      <li><a href="https://www.soumu.go.jp/menu_news/s-news/01gyosei02_02000389.html" target="_blank" rel="noopener">住民基本台帳に基づく人口、人口動態及び世帯数（令和7年1月1日現在）（総務省）</a> — 年齢階級別人口</li>
     </ul>
     <p>参考にしたもの：政府予算ビュー（国の予算のサンキー図）、まるわかり 佐久市予算、文京区の予算まるごと可視化サイト。</p>
   </section>
 </div>
 
+<script id="cmp-data">window.KM_CMP = {"years": ["R2", "R3", "R4", "R5", "R6"], "names": {"202088": "小諸市", "202037": "上田市", "202177": "佐久市", "202193": "東御市", "203211": "軽井沢町", "203238": "御代田町", "203246": "立科町", "202070": "須坂市", "062111": "東根市", "082368": "小美玉市", "082309": "かすみがうら市"}, "komoro": "202088", "kinrin": ["202037", "202177", "202193", "203211", "203238", "203246"], "ruiji": ["202070", "062111", "082368", "082309"], "group": "都市Ⅰ－１", "group_total": 132, "group_selected": 124, "series": {"202088": {"R2": {"pop": 41988, "zaiseiryoku": 0.58, "keijo": 89, "jisshitsu_kosai": 7.1, "shorai_futan": 23, "zaicho_ratio": 26.9, "saishutsu_pc": 587610, "chihozei_pc": 130518, "furusato_pc": 9337, "chihosai_pc": 474893, "minsei_pc": 142992, "kyoiku_pc": 50772, "kensetsu_pc": 88431, "shokuin_pk": 6.98}, "R3": {"pop": 41756, "zaiseiryoku": 0.58, "keijo": 88.6, "jisshitsu_kosai": 7.2, "shorai_futan": 10.2, "zaicho_ratio": 33.8, "saishutsu_pc": 504357, "chihozei_pc": 129478, "furusato_pc": 9777, "chihosai_pc": 479327, "minsei_pc": 181695, "kyoiku_pc": 45446, "kensetsu_pc": 67489, "shokuin_pk": 7.02}, "R4": {"pop": 41623, "zaiseiryoku": 0.58, "keijo": 92.3, "jisshitsu_kosai": 7.2, "shorai_futan": 0, "zaicho_ratio": 37.8, "saishutsu_pc": 447467, "chihozei_pc": 132767, "furusato_pc": 9232, "chihosai_pc": 455077, "minsei_pc": 160664, "kyoiku_pc": 45795, "kensetsu_pc": 31975, "shokuin_pk": 7.02}, "R5": {"pop": 41521, "zaiseiryoku": 0.58, "keijo": 95.5, "jisshitsu_kosai": 7.3, "shorai_futan": 0, "zaicho_ratio": 36.9, "saishutsu_pc": 456327, "chihozei_pc": 138258, "furusato_pc": 10655, "chihosai_pc": 426836, "minsei_pc": 170553, "kyoiku_pc": 35843, "kensetsu_pc": 38608, "shokuin_pk": 7.03}, "R6": {"pop": 41248, "zaiseiryoku": 0.58, "keijo": 94.8, "jisshitsu_kosai": 7.3, "shorai_futan": 0, "zaicho_ratio": 40.9, "saishutsu_pc": 457434, "chihozei_pc": 130870, "furusato_pc": 10437, "chihosai_pc": 398784, "minsei_pc": 171612, "kyoiku_pc": 43143, "kensetsu_pc": 39645, "shokuin_pk": 7.35}}, "202037": {"R2": {"pop": 155595, "zaiseiryoku": 0.6, "keijo": 89.8, "jisshitsu_kosai": 5.3, "shorai_futan": 36.4, "zaicho_ratio": 8.9, "saishutsu_pc": 607537, "chihozei_pc": 137729, "furusato_pc": 2953, "chihosai_pc": 430998, "minsei_pc": 147961, "kyoiku_pc": 40267, "kensetsu_pc": 79518, "shokuin_pk": 7.29}, "R3": {"pop": 154615, "zaiseiryoku": 0.59, "keijo": 85.5, "jisshitsu_kosai": 5.3, "shorai_futan": 23.5, "zaicho_ratio": 9.9, "saishutsu_pc": 499431, "chihozei_pc": 136851, "furusato_pc": 2850, "chihosai_pc": 430902, "minsei_pc": 171748, "kyoiku_pc": 41177, "kensetsu_pc": 37377, "shokuin_pk": 7.34}, "R4": {"pop": 153507, "zaiseiryoku": 0.59, "keijo": 89.7, "jisshitsu_kosai": 5.2, "shorai_futan": 20.2, "zaicho_ratio": 10.3, "saishutsu_pc": 479824, "chihozei_pc": 144042, "furusato_pc": 2534, "chihosai_pc": 417141, "minsei_pc": 161786, "kyoiku_pc": 41665, "kensetsu_pc": 39555, "shokuin_pk": 7.47}, "R5": {"pop": 152484, "zaiseiryoku": 0.58, "keijo": 90.5, "jisshitsu_kosai": 5.3, "shorai_futan": 19.4, "zaicho_ratio": 10.2, "saishutsu_pc": 504684, "chihozei_pc": 146999, "furusato_pc": 2383, "chihosai_pc": 412071, "minsei_pc": 171447, "kyoiku_pc": 63321, "kensetsu_pc": 63771, "shokuin_pk": 7.64}, "R6": {"pop": 151540, "zaiseiryoku": 0.59, "keijo": 93.4, "jisshitsu_kosai": 5.6, "shorai_futan": 22.1, "zaicho_ratio": 9.0, "saishutsu_pc": 516606, "chihozei_pc": 145246, "furusato_pc": 3440, "chihosai_pc": 400723, "minsei_pc": 180613, "kyoiku_pc": 59910, "kensetsu_pc": 57907, "shokuin_pk": 7.72}}, "202177": {"R2": {"pop": 98661, "zaiseiryoku": 0.51, "keijo": 82.1, "jisshitsu_kosai": -0.2, "shorai_futan": 0, "zaicho_ratio": 25.0, "saishutsu_pc": 641262, "chihozei_pc": 131719, "furusato_pc": 8687, "chihosai_pc": 465355, "minsei_pc": 147645, "kyoiku_pc": 60237, "kensetsu_pc": 80299, "shokuin_pk": 7.34}, "R3": {"pop": 98439, "zaiseiryoku": 0.51, "keijo": 78.6, "jisshitsu_kosai": 0.2, "shorai_futan": 0, "zaicho_ratio": 24.8, "saishutsu_pc": 595165, "chihozei_pc": 130711, "furusato_pc": 6823, "chihosai_pc": 471713, "minsei_pc": 176085, "kyoiku_pc": 86653, "kensetsu_pc": 88495, "shokuin_pk": 7.35}, "R4": {"pop": 98198, "zaiseiryoku": 0.51, "keijo": 82.1, "jisshitsu_kosai": 0.7, "shorai_futan": 0, "zaicho_ratio": 25.7, "saishutsu_pc": 583118, "chihozei_pc": 137370, "furusato_pc": 8324, "chihosai_pc": 468109, "minsei_pc": 164483, "kyoiku_pc": 104662, "kensetsu_pc": 120158, "shokuin_pk": 7.34}, "R5": {"pop": 97676, "zaiseiryoku": 0.51, "keijo": 84.8, "jisshitsu_kosai": 1.4, "shorai_futan": 0, "zaicho_ratio": 25.3, "saishutsu_pc": 505292, "chihozei_pc": 141290, "furusato_pc": 7285, "chihosai_pc": 436812, "minsei_pc": 178003, "kyoiku_pc": 61784, "kensetsu_pc": 55694, "shokuin_pk": 7.43}, "R6": {"pop": 97380, "zaiseiryoku": 0.51, "keijo": 86.9, "jisshitsu_kosai": 2.7, "shorai_futan": 0, "zaicho_ratio": 24.7, "saishutsu_pc": 524404, "chihozei_pc": 141303, "furusato_pc": 7189, "chihosai_pc": 406850, "minsei_pc": 178812, "kyoiku_pc": 74241, "kensetsu_pc": 70581, "shokuin_pk": 7.46}}, "202193": {"R2": {"pop": 29929, "zaiseiryoku": 0.5, "keijo": 92.8, "jisshitsu_kosai": 7.6, "shorai_futan": 63.6, "zaicho_ratio": 10.0, "saishutsu_pc": 663977, "chihozei_pc": 136103, "furusato_pc": 16729, "chihosai_pc": 649408, "minsei_pc": 149885, "kyoiku_pc": 45492, "kensetsu_pc": 33526, "shokuin_pk": 8.35}, "R3": {"pop": 29677, "zaiseiryoku": 0.49, "keijo": 91.8, "jisshitsu_kosai": 8.4, "shorai_futan": 40.9, "zaicho_ratio": 17.0, "saishutsu_pc": 603929, "chihozei_pc": 135723, "furusato_pc": 12296, "chihosai_pc": 643414, "minsei_pc": 171855, "kyoiku_pc": 45834, "kensetsu_pc": 64185, "shokuin_pk": 8.42}, "R4": {"pop": 29557, "zaiseiryoku": 0.48, "keijo": 92.4, "jisshitsu_kosai": 9.6, "shorai_futan": 29.8, "zaicho_ratio": 22.2, "saishutsu_pc": 546028, "chihozei_pc": 141017, "furusato_pc": 12031, "chihosai_pc": 607578, "minsei_pc": 167393, "kyoiku_pc": 38330, "kensetsu_pc": 38329, "shokuin_pk": 8.73}, "R5": {"pop": 29256, "zaiseiryoku": 0.48, "keijo": 91.9, "jisshitsu_kosai": 10.1, "shorai_futan": 24.1, "zaicho_ratio": 24.7, "saishutsu_pc": 569137, "chihozei_pc": 143495, "furusato_pc": 17349, "chihosai_pc": 548506, "minsei_pc": 183991, "kyoiku_pc": 38035, "kensetsu_pc": 42003, "shokuin_pk": 8.78}, "R6": {"pop": 28958, "zaiseiryoku": 0.48, "keijo": 91.2, "jisshitsu_kosai": 9.9, "shorai_futan": 25.3, "zaicho_ratio": 20.8, "saishutsu_pc": 588692, "chihozei_pc": 143625, "furusato_pc": 19184, "chihosai_pc": 514366, "minsei_pc": 197741, "kyoiku_pc": 54630, "kensetsu_pc": 51510, "shokuin_pk": 9.08}}, "203211": {"R2": {"pop": 20922, "zaiseiryoku": 1.65, "keijo": 71.4, "jisshitsu_kosai": 1.5, "shorai_futan": 0, "zaicho_ratio": 53.4, "saishutsu_pc": 854348, "chihozei_pc": 441701, "furusato_pc": 18101, "chihosai_pc": 115689, "minsei_pc": 137972, "kyoiku_pc": 83926, "kensetsu_pc": 84175, "shokuin_pk": 12.19}, "R3": {"pop": 21231, "zaiseiryoku": 1.61, "keijo": 66.7, "jisshitsu_kosai": 1.5, "shorai_futan": 0, "zaicho_ratio": 57.5, "saishutsu_pc": 764757, "chihozei_pc": 454175, "furusato_pc": 68439, "chihosai_pc": 100037, "minsei_pc": 175703, "kyoiku_pc": 82615, "kensetsu_pc": 80508, "shokuin_pk": 12.01}, "R4": {"pop": 21510, "zaiseiryoku": 1.5, "keijo": 70.1, "jisshitsu_kosai": 1.5, "shorai_futan": 0, "zaicho_ratio": 57.8, "saishutsu_pc": 792044, "chihozei_pc": 481669, "furusato_pc": 45740, "chihosai_pc": 83224, "minsei_pc": 164693, "kyoiku_pc": 111679, "kensetsu_pc": 95126, "shokuin_pk": 11.85}, "R5": {"pop": 21599, "zaiseiryoku": 1.52, "keijo": 62.7, "jisshitsu_kosai": 1, "shorai_futan": 0, "zaicho_ratio": 62.3, "saishutsu_pc": 797892, "chihozei_pc": 502098, "furusato_pc": 59725, "chihosai_pc": 70868, "minsei_pc": 179516, "kyoiku_pc": 143024, "kensetsu_pc": 91762, "shokuin_pk": 11.85}, "R6": {"pop": 21752, "zaiseiryoku": 1.6, "keijo": 63.1, "jisshitsu_kosai": 0.9, "shorai_futan": 0, "zaicho_ratio": 59.8, "saishutsu_pc": 883040, "chihozei_pc": 523478, "furusato_pc": 92164, "chihosai_pc": 75076, "minsei_pc": 164097, "kyoiku_pc": 186198, "kensetsu_pc": 134381, "shokuin_pk": 12.5}}, "203238": {"R2": {"pop": 15880, "zaiseiryoku": 0.65, "keijo": 79.3, "jisshitsu_kosai": 12.6, "shorai_futan": 0, "zaicho_ratio": 64.4, "saishutsu_pc": 505171, "chihozei_pc": 147123, "furusato_pc": 14611, "chihosai_pc": 352063, "minsei_pc": 108247, "kyoiku_pc": 39937, "kensetsu_pc": 25089, "shokuin_pk": 8.63}, "R3": {"pop": 16052, "zaiseiryoku": 0.63, "keijo": 76.8, "jisshitsu_kosai": 11.6, "shorai_futan": 0, "zaicho_ratio": 64.5, "saishutsu_pc": 457991, "chihozei_pc": 148309, "furusato_pc": 30383, "chihosai_pc": 322135, "minsei_pc": 149245, "kyoiku_pc": 38963, "kensetsu_pc": 27971, "shokuin_pk": 8.53}, "R4": {"pop": 16221, "zaiseiryoku": 0.61, "keijo": 72.9, "jisshitsu_kosai": 9.8, "shorai_futan": 0, "zaicho_ratio": 56.9, "saishutsu_pc": 519857, "chihozei_pc": 162219, "furusato_pc": 32957, "chihosai_pc": 297670, "minsei_pc": 140970, "kyoiku_pc": 57698, "kensetsu_pc": 39865, "shokuin_pk": 8.14}, "R5": {"pop": 16551, "zaiseiryoku": 0.6, "keijo": 75.9, "jisshitsu_kosai": 7.8, "shorai_futan": 0, "zaicho_ratio": 55.3, "saishutsu_pc": 511601, "chihozei_pc": 156769, "furusato_pc": 39546, "chihosai_pc": 278166, "minsei_pc": 149207, "kyoiku_pc": 52983, "kensetsu_pc": 62804, "shokuin_pk": 8.1}, "R6": {"pop": 16770, "zaiseiryoku": 0.6, "keijo": 78.6, "jisshitsu_kosai": 4.9, "shorai_futan": 0, "zaicho_ratio": 57.8, "saishutsu_pc": 515257, "chihozei_pc": 155469, "furusato_pc": 40154, "chihosai_pc": 278825, "minsei_pc": 156699, "kyoiku_pc": 39054, "kensetsu_pc": 75147, "shokuin_pk": 8.77}}, "203246": {"R2": {"pop": 7063, "zaiseiryoku": 0.36, "keijo": 89.7, "jisshitsu_kosai": 7.8, "shorai_futan": 0, "zaicho_ratio": 42.2, "saishutsu_pc": 784202, "chihozei_pc": 126229, "furusato_pc": 6127, "chihosai_pc": 398388, "minsei_pc": 152839, "kyoiku_pc": 63345, "kensetsu_pc": 54440, "shokuin_pk": 12.32}, "R3": {"pop": 6970, "zaiseiryoku": 0.35, "keijo": 84.4, "jisshitsu_kosai": 7.8, "shorai_futan": 0, "zaicho_ratio": 39.5, "saishutsu_pc": 789610, "chihozei_pc": 119449, "furusato_pc": 4710, "chihosai_pc": 434811, "minsei_pc": 180101, "kyoiku_pc": 54290, "kensetsu_pc": 89410, "shokuin_pk": 12.48}, "R4": {"pop": 6843, "zaiseiryoku": 0.33, "keijo": 85.8, "jisshitsu_kosai": 8.1, "shorai_futan": 0, "zaicho_ratio": 40.3, "saishutsu_pc": 869198, "chihozei_pc": 129568, "furusato_pc": 7173, "chihosai_pc": 451932, "minsei_pc": 173961, "kyoiku_pc": 53565, "kensetsu_pc": 87639, "shokuin_pk": 13.01}, "R5": {"pop": 6724, "zaiseiryoku": 0.32, "keijo": 87.4, "jisshitsu_kosai": 8, "shorai_futan": 0, "zaicho_ratio": 40.2, "saishutsu_pc": 849428, "chihozei_pc": 132907, "furusato_pc": 14458, "chihosai_pc": 498122, "minsei_pc": 182688, "kyoiku_pc": 76496, "kensetsu_pc": 132526, "shokuin_pk": 13.24}, "R6": {"pop": 6674, "zaiseiryoku": 0.32, "keijo": 86.2, "jisshitsu_kosai": 7.7, "shorai_futan": 0, "zaicho_ratio": 38.7, "saishutsu_pc": 863585, "chihozei_pc": 131094, "furusato_pc": 26169, "chihosai_pc": 550015, "minsei_pc": 188446, "kyoiku_pc": 71515, "kensetsu_pc": 139840, "shokuin_pk": 13.04}}, "202070": {"R2": {"pop": 50340, "zaiseiryoku": 0.58, "keijo": 90.2, "jisshitsu_kosai": 9.3, "shorai_futan": 19.1, "zaicho_ratio": 23.5, "saishutsu_pc": 661011, "chihozei_pc": 125197, "furusato_pc": 29215, "chihosai_pc": 374263, "minsei_pc": 142762, "kyoiku_pc": 117784, "kensetsu_pc": 113106, "shokuin_pk": 8.42}, "R3": {"pop": 50062, "zaiseiryoku": 0.57, "keijo": 89.4, "jisshitsu_kosai": 8.8, "shorai_futan": 15.5, "zaicho_ratio": 22.8, "saishutsu_pc": 607970, "chihozei_pc": 124509, "furusato_pc": 47370, "chihosai_pc": 416159, "minsei_pc": 169634, "kyoiku_pc": 81711, "kensetsu_pc": 115821, "shokuin_pk": 8.47}, "R4": {"pop": 49776, "zaiseiryoku": 0.56, "keijo": 91.7, "jisshitsu_kosai": 8.2, "shorai_futan": 0, "zaicho_ratio": 26.9, "saishutsu_pc": 608165, "chihozei_pc": 130226, "furusato_pc": 64991, "chihosai_pc": 417912, "minsei_pc": 170201, "kyoiku_pc": 54971, "kensetsu_pc": 84526, "shokuin_pk": 8.58}, "R5": {"pop": 49582, "zaiseiryoku": 0.55, "keijo": 91.7, "jisshitsu_kosai": 8, "shorai_futan": 0, "zaicho_ratio": 28.0, "saishutsu_pc": 593324, "chihozei_pc": 131803, "furusato_pc": 79174, "chihosai_pc": 409956, "minsei_pc": 171164, "kyoiku_pc": 56328, "kensetsu_pc": 62418, "shokuin_pk": 8.63}, "R6": {"pop": 49149, "zaiseiryoku": 0.55, "keijo": 94.7, "jisshitsu_kosai": 8.3, "shorai_futan": 0, "zaicho_ratio": 28.0, "saishutsu_pc": 639261, "chihozei_pc": 130954, "furusato_pc": 95734, "chihosai_pc": 390275, "minsei_pc": 181778, "kyoiku_pc": 62583, "kensetsu_pc": 59823, "shokuin_pk": 9.05}}, "062111": {"R2": {"pop": 47808, "zaiseiryoku": 0.68, "keijo": 93.3, "jisshitsu_kosai": 7.1, "shorai_futan": 13.5, "zaicho_ratio": 19.8, "saishutsu_pc": 616819, "chihozei_pc": 142649, "furusato_pc": 39175, "chihosai_pc": 416438, "minsei_pc": 147141, "kyoiku_pc": 85413, "kensetsu_pc": 78359, "shokuin_pk": 6.94}, "R3": {"pop": 47950, "zaiseiryoku": 0.65, "keijo": 84, "jisshitsu_kosai": 7.5, "shorai_futan": 7.6, "zaicho_ratio": 21.2, "saishutsu_pc": 531434, "chihozei_pc": 143052, "furusato_pc": 40411, "chihosai_pc": 428345, "minsei_pc": 181581, "kyoiku_pc": 55828, "kensetsu_pc": 61558, "shokuin_pk": 6.92}, "R4": {"pop": 47982, "zaiseiryoku": 0.63, "keijo": 90.9, "jisshitsu_kosai": 7.8, "shorai_futan": 0, "zaicho_ratio": 21.2, "saishutsu_pc": 519147, "chihozei_pc": 147428, "furusato_pc": 43863, "chihosai_pc": 415475, "minsei_pc": 160661, "kyoiku_pc": 58363, "kensetsu_pc": 51203, "shokuin_pk": 7.17}, "R5": {"pop": 47830, "zaiseiryoku": 0.62, "keijo": 93, "jisshitsu_kosai": 8.3, "shorai_futan": 0, "zaicho_ratio": 20.4, "saishutsu_pc": 518186, "chihozei_pc": 151124, "furusato_pc": 48103, "chihosai_pc": 394896, "minsei_pc": 165838, "kyoiku_pc": 57432, "kensetsu_pc": 48246, "shokuin_pk": 7.02}, "R6": {"pop": 47631, "zaiseiryoku": 0.62, "keijo": 94.8, "jisshitsu_kosai": 8.8, "shorai_futan": 0, "zaicho_ratio": 19.9, "saishutsu_pc": 590281, "chihozei_pc": 145895, "furusato_pc": 55185, "chihosai_pc": 384205, "minsei_pc": 183024, "kyoiku_pc": 61525, "kensetsu_pc": 75424, "shokuin_pk": 7.08}}, "082368": {"R2": {"pop": 50250, "zaiseiryoku": 0.62, "keijo": 86.2, "jisshitsu_kosai": 7.3, "shorai_futan": 60.5, "zaicho_ratio": 21.4, "saishutsu_pc": 651736, "chihozei_pc": 136409, "furusato_pc": 3380, "chihosai_pc": 564237, "minsei_pc": 147343, "kyoiku_pc": 100833, "kensetsu_pc": 116661, "shokuin_pk": 9.37}, "R3": {"pop": 49445, "zaiseiryoku": 0.6, "keijo": 85.5, "jisshitsu_kosai": 6.7, "shorai_futan": 42.3, "zaicho_ratio": 21.6, "saishutsu_pc": 554625, "chihozei_pc": 135729, "furusato_pc": 4222, "chihosai_pc": 578863, "minsei_pc": 173239, "kyoiku_pc": 95937, "kensetsu_pc": 90021, "shokuin_pk": 9.53}, "R4": {"pop": 49224, "zaiseiryoku": 0.59, "keijo": 87.3, "jisshitsu_kosai": 6.4, "shorai_futan": 20.1, "zaicho_ratio": 21.9, "saishutsu_pc": 500369, "chihozei_pc": 139653, "furusato_pc": 6474, "chihosai_pc": 542526, "minsei_pc": 165932, "kyoiku_pc": 55931, "kensetsu_pc": 39795, "shokuin_pk": 9.57}, "R5": {"pop": 48797, "zaiseiryoku": 0.57, "keijo": 87.4, "jisshitsu_kosai": 6.9, "shorai_futan": 17.7, "zaicho_ratio": 18.4, "saishutsu_pc": 495352, "chihozei_pc": 142812, "furusato_pc": 10332, "chihosai_pc": 509733, "minsei_pc": 170308, "kyoiku_pc": 51432, "kensetsu_pc": 29837, "shokuin_pk": 9.43}, "R6": {"pop": 48482, "zaiseiryoku": 0.57, "keijo": 90.3, "jisshitsu_kosai": 7.2, "shorai_futan": 20.6, "zaicho_ratio": 18.1, "saishutsu_pc": 528734, "chihozei_pc": 140961, "furusato_pc": 15412, "chihosai_pc": 468198, "minsei_pc": 185229, "kyoiku_pc": 74487, "kensetsu_pc": 34334, "shokuin_pk": 9.55}}, "082309": {"R2": {"pop": 41200, "zaiseiryoku": 0.61, "keijo": 89.2, "jisshitsu_kosai": 9.3, "shorai_futan": 45.6, "zaicho_ratio": 11.0, "saishutsu_pc": 578751, "chihozei_pc": 135695, "furusato_pc": 750, "chihosai_pc": 468949, "minsei_pc": 148595, "kyoiku_pc": 62331, "kensetsu_pc": 52229, "shokuin_pk": 9.13}, "R3": {"pop": 40737, "zaiseiryoku": 0.59, "keijo": 83.5, "jisshitsu_kosai": 9.7, "shorai_futan": 51.5, "zaicho_ratio": 10.7, "saishutsu_pc": 502017, "chihozei_pc": 139753, "furusato_pc": 825, "chihosai_pc": 493972, "minsei_pc": 178990, "kyoiku_pc": 75648, "kensetsu_pc": 88344, "shokuin_pk": 9.23}, "R4": {"pop": 40628, "zaiseiryoku": 0.59, "keijo": 88.2, "jisshitsu_kosai": 9.5, "shorai_futan": 54.7, "zaicho_ratio": 11.0, "saishutsu_pc": 489364, "chihozei_pc": 141389, "furusato_pc": 2321, "chihosai_pc": 491618, "minsei_pc": 164786, "kyoiku_pc": 52896, "kensetsu_pc": 78553, "shokuin_pk": 9.13}, "R5": {"pop": 40369, "zaiseiryoku": 0.57, "keijo": 88.8, "jisshitsu_kosai": 8.9, "shorai_futan": 56.9, "zaicho_ratio": 5.3, "saishutsu_pc": 471986, "chihozei_pc": 143482, "furusato_pc": 2540, "chihosai_pc": 478632, "minsei_pc": 165939, "kyoiku_pc": 66221, "kensetsu_pc": 48837, "shokuin_pk": 8.97}, "R6": {"pop": 39893, "zaiseiryoku": 0.57, "keijo": 87.3, "jisshitsu_kosai": 8.5, "shorai_futan": 47.4, "zaicho_ratio": 7.8, "saishutsu_pc": 470483, "chihozei_pc": 142674, "furusato_pc": 4917, "chihosai_pc": 467204, "minsei_pc": 170500, "kyoiku_pc": 43748, "kensetsu_pc": 40297, "shokuin_pk": 9.0}}}, "median": {"R2": {"zaiseiryoku": 0.37, "keijo": 92.65, "jisshitsu_kosai": 9.2, "shorai_futan": 41.55, "zaicho_ratio": 19.55, "saishutsu_pc": 796980.0, "chihozei_pc": 113812.0, "furusato_pc": 10553.0, "chihosai_pc": 666444.0, "minsei_pc": 195447.5, "kyoiku_pc": 66811.5, "kensetsu_pc": 90714.5, "shokuin_pk": 10.25}, "R3": {"zaiseiryoku": 0.36, "keijo": 88.6, "jisshitsu_kosai": 8.8, "shorai_futan": 33.45, "zaicho_ratio": 20.25, "saishutsu_pc": 729627.5, "chihozei_pc": 113849.5, "furusato_pc": 12551.5, "chihosai_pc": 664693.5, "minsei_pc": 222747.0, "kyoiku_pc": 60398.0, "kensetsu_pc": 83384.0, "shokuin_pk": 10.46}, "R4": {"zaiseiryoku": 0.36, "keijo": 91.9, "jisshitsu_kosai": 8.6, "shorai_futan": 24.55, "zaicho_ratio": 21.95, "saishutsu_pc": 721801.0, "chihozei_pc": 119303.0, "furusato_pc": 14683.5, "chihosai_pc": 655141.5, "minsei_pc": 212011.5, "kyoiku_pc": 60786.0, "kensetsu_pc": 85309.0, "shokuin_pk": 10.57}, "R5": {"zaiseiryoku": 0.35, "keijo": 92.9, "jisshitsu_kosai": 8.85, "shorai_futan": 18.65, "zaicho_ratio": 22.9, "saishutsu_pc": 742256.0, "chihozei_pc": 121990.5, "furusato_pc": 16621.5, "chihosai_pc": 636758.5, "minsei_pc": 224979.5, "kyoiku_pc": 65946.5, "kensetsu_pc": 86868.5, "shokuin_pk": 10.62}, "R6": {"zaiseiryoku": 0.36, "keijo": 93.55, "jisshitsu_kosai": 8.85, "shorai_futan": 21.9, "zaicho_ratio": 22.75, "saishutsu_pc": 778179.0, "chihozei_pc": 121972.0, "furusato_pc": 19413.0, "chihosai_pc": 658310.5, "minsei_pc": 237162.0, "kyoiku_pc": 73797.5, "kensetsu_pc": 92574.0, "shokuin_pk": 10.89}}, "profile": {"202088": {"area": 98.55, "ind1": 8.8, "ind2": 29.1, "ind3": 62.2, "aging": 33.3}, "202037": {"area": 552.04, "ind1": 4.6, "ind2": 33.4, "ind3": 62, "aging": 31.3}, "202177": {"area": 423.51, "ind1": 8.1, "ind2": 28.7, "ind3": 63.3, "aging": 31.4}, "202193": {"area": 112.37, "ind1": 10.7, "ind2": 32.8, "ind3": 56.5, "aging": 32.8}, "203211": {"area": 156.03, "ind1": 3.5, "ind2": 14.2, "ind3": 82.2, "aging": 32.1}, "203238": {"area": 58.79, "ind1": 9, "ind2": 28.2, "ind3": 62.8, "aging": 27.7}, "203246": {"area": 66.87, "ind1": 16.3, "ind2": 27.1, "ind3": 56.5, "aging": 38.2}, "202070": {"area": 149.67, "ind1": 11.6, "ind2": 29.2, "ind3": 59.2, "aging": 32.7}, "062111": {"area": 206.94, "ind1": 11.5, "ind2": 31.6, "ind3": 56.9, "aging": 28.3}, "082368": {"area": 144.74, "ind1": 10.9, "ind2": 29.8, "ind3": 59.4, "aging": 31.0}, "082309": {"area": 156.6, "ind1": 10.5, "ind2": 30.9, "ind3": 58.5, "aging": 32.6}}};</script>
 <script>{
 
 window.km = window.km || {};
@@ -302,13 +426,17 @@ km.DESC[km.K] = '国や県から、特定の事業のために受け取るお金
 km.DESC[km.D] = '学校や道路などの整備のために借りるお金です。';
 km.DESC[km.O] = '目的のある基金の取り崩し、使用料、預託金の戻りなど、使い道が決まっているその他のお金です。';
 
+km.KOMORO_TABS = ['flow', 'change', 'jigyo'];
 km.showTab = (name) => {
+  const mode = km.KOMORO_TABS.includes(name) ? 'komoro' : name;
   document.querySelectorAll('[data-section]').forEach((s) => { s.hidden = s.dataset.section !== name; });
-  document.querySelectorAll('.km-tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tab === name)));
+  document.querySelectorAll('[data-mode-only]').forEach((s) => { s.hidden = s.dataset.modeOnly !== mode; });
+  document.querySelectorAll('.km-tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.mode === mode)));
+  document.querySelectorAll('.km-subtab').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.tab === name)));
 };
-document.querySelectorAll('.km-tab').forEach((t) => t.addEventListener('click', () => { km.showTab(t.dataset.tab); dash.setLink(t.dataset.tab); }));
+document.querySelectorAll('.km-tab, .km-subtab').forEach((t) => t.addEventListener('click', () => { km.showTab(t.dataset.tab); dash.setLink(t.dataset.tab); window.scrollTo({top: 0}); }));
 const named = location.hash.slice(1);
-if (['flow', 'change', 'jigyo', 'about'].includes(named)) km.showTab(named);
+if (['flow', 'change', 'jigyo', 'kinrin', 'ruiji', 'about'].includes(named)) km.showTab(named);
 document.querySelectorAll('.km-reset').forEach((b) => b.addEventListener('click', () => { km.sel = null; dash.draw('sankey'); dash.draw('panel'); }));
 document.querySelectorAll('.km-q').forEach((q) => q.addEventListener('input', () => { km.pQ = q.value.trim(); dash.draw('ptable'); dash.draw('pcount'); }));
 document.querySelectorAll('.km-table th button').forEach((b) => b.addEventListener('click', () => {
@@ -420,7 +548,7 @@ dash.draw('sankey', (el) => {
   const rightTot = {};
   links.filter((l) => km.FUNDS.includes(l.source)).forEach((l) => { rightTot[l.target] = (rightTot[l.target] || 0) + l.value; });
   const right = Object.keys(rightTot).sort((a, b) => (a === 'その他の款' ? 1 : b === 'その他の款' ? -1 : rightTot[b] - rightTot[a]));
-  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '収入から財源区分、支出の款へのお金の流れ');
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '収入から財源区分、支出の款へのお金の流れ');
   const measure = (names) => { const t = svg.append('g'); let m = 0; names.forEach((n) => { const x = t.append('text').attr('class', 'lbl').text(n); m = Math.max(m, x.node().getComputedTextLength()); }); t.remove(); return m; };
   const withAmt = (ns) => ns.map((n) => n + ' 00.0億円');
   const mL = Math.min(measure(withAmt(left)) + 10, W * 0.3), mR = Math.min(measure(withAmt(right)) + 10, W * 0.3);
@@ -611,7 +739,200 @@ dash.draw('ptable', (tb) => {
 });
 
 }</script>
-<footer class="km-foot">このページは小諸市の公式サイトではありません。数字の出典は小諸市「令和8年度一般会計当初予算書」ほか（「説明と出典」タブ参照）。データとソース：<a href="https://github.com/thunder-19900512/komoro-budget" target="_blank" rel="noopener">github.com/thunder-19900512/komoro-budget</a></footer>
+<script>{
+/* 近隣と比べる・似た市と比べる（総務省 市町村別決算状況調 R2〜R6。データは tools/build_compare.py が埋め込む） */
+const C = window.KM_CMP;
+const km = window.km;
+const IND = [
+  {k: 'zaiseiryoku', t: '財政力指数', how: '自前の税収で、標準的な行政の費用をどれだけまかなえるか。1に近いほど余裕がある（1を超えると国の普通交付税を受け取らない）。', u: '', kind: 'pt', d: 2},
+  {k: 'keijo', t: '経常収支比率', how: '毎年決まって出ていくお金（人件費・借金の返済など）が、毎年入るお金の何％か。高いほど、新しいことに回せる余地が小さい。', u: '%', kind: 'pt', d: 1},
+  {k: 'zaicho_ratio', t: '財政調整基金の厚み', how: '使い道を決めていない貯え（財政調整基金）が、1年の標準的な収入（標準財政規模）の何％あるか。', u: '%', kind: 'pt', d: 1},
+  {k: 'jisshitsu_kosai', t: '実質公債費比率', how: '借金の返済の重さ（3年の平均）。18％以上になると、借金に国・県の許可が要る。', u: '%', kind: 'pt', d: 1},
+  {k: 'shorai_futan', t: '将来負担比率', how: 'これから払う借金などの負担が、収入の何％か。0は、負担よりも充てられる貯えなどが多い状態（総務省の表では「－」）。', u: '%', kind: 'pt', d: 1},
+  {k: 'chihosai_pc', t: '借金の残高（1人あたり）', how: '地方債の現在高を、住民1人あたりにしたもの。', u: '円', kind: 'idx'},
+  {k: 'saishutsu_pc', t: '歳出の総額（1人あたり）', how: '1年間に使ったお金の総額。R2・R3は国の給付金などで、どこも大きい。', u: '円', kind: 'idx'},
+  {k: 'chihozei_pc', t: '地方税（1人あたり）', how: '市町村民税・固定資産税など。R6は国の定額減税で、どこも下がっている。', u: '円', kind: 'idx'},
+  {k: 'furusato_pc', t: 'ふるさと納税（1人あたり）', how: '受け入れた寄附の額。返礼品などの経費を引く前の額。', u: '円', kind: 'idx'},
+  {k: 'minsei_pc', t: '民生費（1人あたり）', how: '福祉・子育て・生活保護などに使ったお金。', u: '円', kind: 'idx'},
+  {k: 'kyoiku_pc', t: '教育費（1人あたり）', how: '学校・社会教育・給食など。学校の建て替えの時期で大きく変わる。', u: '円', kind: 'idx'},
+  {k: 'kensetsu_pc', t: '建設事業費（1人あたり）', how: '道路・学校など、ものをつくる・直すお金（普通建設事業費）。年によって大きく上下する。', u: '円', kind: 'idx'},
+  {k: 'shokuin_pk', t: '職員数（人口千人あたり）', how: '普通会計の職員数。消防やごみ処理を広域連合などに任せていると、少なく出る。', u: '人', kind: 'pt', d: 2},
+];
+const STATS = ['zaiseiryoku', 'keijo', 'zaicho_ratio', 'chihosai_pc'];
+const MODES = {
+  kinrin: {codes: () => C.kinrin, median: false, who: '比べた6市町'},
+  ruiji: {codes: () => C.ruiji, median: true, who: '比べた4市'},
+};
+const state = {kinrin: {focus: null, view: 'abs'}, ruiji: {focus: null, view: 'abs'}};
+const short = (c) => C.names[c].replace(/(市|町)$/, '');
+const fmt = (v, ind) => {
+  if (v == null) return '—';
+  if (ind.u === '円') return Math.abs(v) >= 10000 ? (v / 10000).toFixed(1) + '万円' : Math.round(v).toLocaleString('ja-JP') + '円';
+  if (ind.u === '%') return v.toFixed(ind.d) + '%';
+  if (ind.u === '人') return v.toFixed(ind.d) + '人';
+  return v.toFixed(ind.d);
+};
+const val = (c, y, k) => C.series[c][y][k];
+const svgEl = (tag, attrs, text) => {
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const a in attrs) e.setAttribute(a, attrs[a]);
+  if (text != null) e.textContent = text;
+  return e;
+};
+
+function lineChart(ind, mode) {
+  const st = state[mode], conf = MODES[mode], ys = C.years;
+  const idx = st.view === 'idx' && ind.kind === 'idx';
+  const raw = (c) => ys.map((y) => val(c, y, ind.k));
+  const tr = (a) => idx ? a.map((v) => (a[0] ? v / a[0] * 100 : null)) : a;
+  const lines = conf.codes().map((c) => ({c, a: tr(raw(c))}));
+  if (conf.median) lines.push({c: 'median', a: tr(ys.map((y) => C.median[y][ind.k]))});
+  lines.push({c: C.komoro, a: tr(raw(C.komoro))});
+  const all = lines.flatMap((l) => l.a).filter((v) => v != null);
+  let lo = Math.min(...all), hi = Math.max(...all);
+  const pad = (hi - lo) * 0.1 || 1;
+  lo = (lo >= 0 && lo - pad < 0) ? 0 : lo - pad; hi += pad;
+  const narrow = window.innerWidth < 480;
+  const W = narrow ? 330 : 420, H = narrow ? 190 : 200, L = 50, R = 56, T = 8, B = 22;
+  const x = (i) => L + i * (W - L - R) / (ys.length - 1);
+  const y = (v) => T + (hi - v) / (hi - lo) * (H - T - B);
+  const s = svgEl('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `${ind.t}の推移（令和2〜6年度）`});
+  for (let i = 0; i <= 3; i++) {
+    const v = lo + (hi - lo) * i / 3;
+    s.append(svgEl('line', {x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: '#ececec'}));
+    s.append(svgEl('text', {x: L - 6, y: y(v) + 4, 'text-anchor': 'end'}, idx ? Math.round(v) : fmt(v, ind)));
+  }
+  ys.forEach((yr, i) => s.append(svgEl('text', {x: x(i), y: H - 5, 'text-anchor': 'middle'}, yr)));
+  const labels = [];
+  for (const l of lines) {
+    const isK = l.c === C.komoro, isM = l.c === 'median', isF = l.c === st.focus;
+    const pts = l.a.map((v, i) => (v == null ? null : [x(i), y(v)])).filter(Boolean);
+    const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('');
+    const color = isK ? 'var(--mirai-primary-accent)' : isF ? 'var(--km-focus)' : isM ? 'var(--mirai-text-muted)' : 'var(--cds-chart-muted)';
+    const path = svgEl('path', {d, fill: 'none', stroke: color, 'stroke-width': isK ? 3 : isF ? 2.4 : 1.5, 'stroke-linejoin': 'round'});
+    if (isM) path.setAttribute('stroke-dasharray', '4 4');
+    path.append(svgEl('title', {}, isM ? '同じ区分の中央値' : C.names[l.c]));
+    s.append(path);
+    if (isK || isF) l.a.forEach((v, i) => { if (v == null) return; const c = svgEl('circle', {cx: x(i), cy: y(v), r: isK ? 3.2 : 2.6, fill: color}); c.append(svgEl('title', {}, `${C.names[l.c]} ${ys[i]}：${idx ? Math.round(v) : fmt(v, ind)}`)); s.append(c); });
+    if ((isK || isF || isM) && l.a[l.a.length - 1] != null) labels.push({t: isM ? '中央値' : short(l.c), y: y(l.a[l.a.length - 1]), cls: isK ? 'k' : isF ? 'f' : ''});
+  }
+  if (st.focus && !lines.some((l) => l.c === st.focus)) st.focus = null;
+  labels.sort((a, b) => a.y - b.y);
+  for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 13) labels[i].y = labels[i - 1].y + 13;
+  const over = labels.length ? labels[labels.length - 1].y - (H - B - 6) : 0;
+  if (over > 0) labels.forEach((lb) => { lb.y -= over; });
+  labels.forEach((lb) => s.append(svgEl('text', {x: W - R + 6, y: lb.y + 4, class: lb.cls}, lb.t)));
+  return s;
+}
+
+function changeLine(ind) {
+  const a = val(C.komoro, 'R2', ind.k), b = val(C.komoro, 'R6', ind.k);
+  const p = km.mk('p', 'km-chg');
+  const show = (v) => (ind.k === 'shorai_futan' && v === 0 ? 'なし' : fmt(v, ind));
+  p.append('小諸：R2 ' + show(a) + ' → R6 ');
+  p.append(km.mk('b', null, show(b)));
+  if (ind.kind === 'idx') p.append(a ? `（R2を100として ${Math.round(b / a * 100)}）` : '');
+  else { const dlt = b - a; p.append(`（${dlt >= 0 ? '+' : '−'}${Math.abs(dlt).toFixed(ind.d)}${ind.u === '%' ? 'ポイント' : ''}）`); }
+  return p;
+}
+
+function table(head, rows, komoroRow) {
+  const box = km.mk('div', 'km-tablebox');
+  const t = km.mk('table', 'km-table');
+  const tr = km.mk('tr');
+  head.forEach((h, i) => { const th = km.mk('th', i ? 'num' : null, h); tr.append(th); });
+  const thead = km.mk('thead'); thead.append(tr); t.append(thead);
+  const tb = km.mk('tbody');
+  rows.forEach((r, ri) => { const row = km.mk('tr', ri === komoroRow ? 'is-komoro' : null); r.forEach((v, i) => row.append(km.mk('td', i ? 'num' : null, v))); tb.append(row); });
+  t.append(tb); box.append(t); return box;
+}
+
+function render(el, mode) {
+  if (!C) { el.textContent = 'データを読み込めませんでした。'; return; }
+  const st = state[mode], conf = MODES[mode];
+  const codes = [C.komoro, ...conf.codes()];
+  el.textContent = '';
+
+  if (mode === 'ruiji') {
+    const why = km.mk('div', 'km-card km-why');
+    why.append(km.mk('h2', null, 'なぜこの4市なのか'));
+    why.append(km.mk('p', null, `総務省は、全国の市町村を人口と産業の形でグループ（類似団体）に分け、財政を比べる物差しにしています。小諸市のグループは「${C.group}」（人口5万人未満で、第2次・第3次産業で働く人が9割未満、第3次産業が5割5分以上の市）で、全国に${C.group_total}市あります。そこから次の順で4市を選びました。`));
+    const ol = km.mk('ol');
+    ['海に面していない（内陸にある）', '人口が3万〜5万人、面積が250km²以下', '財政力指数が0.55〜0.62で、人口の減り方が比較的ゆるい'].forEach((s) => ol.append(km.mk('li', null, s)));
+    why.append(ol);
+    why.append(km.mk('p', 'km-note', '須坂市（長野県）・東根市（山形県）は、盆地や山地を抱える寒い内陸の市で、地形も近い市です。小美玉市・かすみがうら市（茨城県）は、数字は近いものの、関東平野の平らな土地にあります。東御市も同じグループですが、隣の市なので「近隣と比べる」に入れました。点線の「中央値」は、このグループで総務省が平均の計算に使った' + C.group_selected + '市について、このページが計算した真ん中の値です（総務省の公表値ではありません）。'));
+    el.append(why);
+  }
+
+  const prof = km.mk('div', 'km-card');
+  prof.append(km.mk('h2', null, mode === 'ruiji' ? '4市のすがた' : '比べた市町のすがた'));
+  prof.append(km.mk('p', 'km-note', '人口は住民基本台帳（令和7年1月1日）。増減は令和3年1月1日との比較。高齢化率は65歳以上の割合。産業は令和2年国勢調査の就業者の割合（第1次／第2次／第3次）。'));
+  prof.append(table(['', '人口', '増減', '面積', '高齢化率', '産業（％）', '財政力指数'], codes.map((c) => {
+    const s = C.series[c], p = C.profile[c], d = (s.R6.pop / s.R2.pop - 1) * 100;
+    return [C.names[c], s.R6.pop.toLocaleString('ja-JP') + '人', (d >= 0 ? '+' : '−') + Math.abs(d).toFixed(1) + '%', p.area.toFixed(1) + 'km²', p.aging.toFixed(1) + '%', [p.ind1, p.ind2, p.ind3].map((v) => v.toFixed(1)).join('／'), s.R6.zaiseiryoku.toFixed(2)];
+  }), 0));
+  el.append(prof);
+
+  const stats = km.mk('div', 'km-stats');
+  STATS.forEach((k) => {
+    const ind = IND.find((i) => i.k === k);
+    const others = conf.codes().map((c) => val(c, 'R6', k));
+    const card = km.mk('div', 'km-card km-stat');
+    card.append(km.mk('div', 'k', ind.t + '（令和6年度）'));
+    card.append(km.mk('div', 'v', fmt(val(C.komoro, 'R6', k), ind)));
+    card.append(km.mk('div', 'r', `${conf.who}：${fmt(Math.min(...others), ind)}〜${fmt(Math.max(...others), ind)}`));
+    if (conf.median) card.append(km.mk('div', 'r', `同じ区分の中央値：${fmt(C.median.R6[k], ind)}`));
+    stats.append(card);
+  });
+  el.append(stats);
+
+  const bar = km.mk('div', 'km-card km-cmpbar');
+  const chips = km.mk('div', 'km-chips');
+  chips.append(km.mk('span', 'lbl', '線を強調する'));
+  const kchip = km.mk('span', 'km-chip is-komoro', '小諸市'); chips.append(kchip);
+  conf.codes().forEach((c) => {
+    const b = km.mk('button', 'km-chip', C.names[c]); b.type = 'button';
+    b.setAttribute('aria-pressed', String(st.focus === c));
+    b.addEventListener('click', () => { st.focus = st.focus === c ? null : c; render(el, mode); });
+    chips.append(b);
+  });
+  if (conf.median) chips.append(km.mk('span', 'km-note', '点線＝同じ区分の中央値'));
+  const seg = km.mk('div', 'km-seg');
+  [['abs', '実際の値'], ['idx', 'R2を100とした伸び']].forEach(([v, t]) => {
+    const b = km.mk('button', 'km-btn', t); b.type = 'button';
+    b.setAttribute('aria-pressed', String(st.view === v));
+    b.addEventListener('click', () => { st.view = v; render(el, mode); });
+    seg.append(b);
+  });
+  bar.append(chips, seg);
+  el.append(bar);
+  if (st.view === 'idx') el.append(km.mk('p', 'km-note', '「R2を100とした伸び」は、金額の指標だけに効きます。％などの指標は実際の値のままです。'));
+
+  const grid = km.mk('div', 'km-charts');
+  IND.forEach((ind) => {
+    const card = km.mk('div', 'km-card');
+    card.append(km.mk('h2', null, ind.t));
+    card.append(km.mk('p', 'km-note', ind.how));
+    const box = km.mk('div', 'km-line'); box.append(lineChart(ind, mode)); card.append(box);
+    card.append(changeLine(ind));
+    grid.append(card);
+  });
+  el.append(grid);
+
+  const all = km.mk('div', 'km-card');
+  all.append(km.mk('h2', null, '令和6年度の値を一覧で'));
+  all.append(km.mk('p', 'km-note', '表は横にスクロールできます。将来負担比率の「なし」は、総務省の表で「－」のもの。'));
+  const head = ['', ...IND.map((i) => i.t.replace('（1人あたり）', '／人').replace('（人口千人あたり）', '／千人'))];
+  const rows = codes.map((c) => [C.names[c], ...IND.map((i) => (i.k === 'shorai_futan' && val(c, 'R6', i.k) === 0 ? 'なし' : fmt(val(c, 'R6', i.k), i)))]);
+  if (conf.median) rows.push(['同じ区分の中央値', ...IND.map((i) => fmt(C.median.R6[i.k], i))]);
+  all.append(table(head, rows, 0));
+  el.append(all);
+}
+
+dash.draw('cmp-kinrin', (el) => render(el, 'kinrin'));
+dash.draw('cmp-ruiji', (el) => render(el, 'ruiji'));
+}</script>
+<footer class="km-foot"><div>このページは小諸市の公式サイトではありません。数字の出典は小諸市「令和8年度一般会計当初予算書」、総務省「市町村別決算状況調」ほか（「説明と出典」タブ参照）。データとソース：<a href="https://github.com/thunder-19900512/komoro-budget" target="_blank" rel="noopener">github.com/thunder-19900512/komoro-budget</a></div></footer>
 </div>
 <script>
 (function () {
