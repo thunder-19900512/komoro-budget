@@ -162,6 +162,45 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
 .km-foot a { color: #fff; }
 /* 比べるタブ（近隣・似た市） */
 .km [hidden] { display: none !important; }
+
+/* わたしの税金 */
+.km-zei { display: grid; grid-template-columns: minmax(0, 22rem) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 52rem) { .km-zei { grid-template-columns: minmax(0, 1fr); } }
+.km-form { display: grid; gap: 14px; }
+.km-form label { display: grid; gap: 4px; font-size: 14px; font-weight: 700; }
+.km-form .hint { font-size: 12px; font-weight: 500; color: var(--mirai-text-muted); line-height: 1.6; }
+.km-form input, .km-form select { font: inherit; font-size: 16px; height: 42px; padding: 0 14px; border: 1px solid var(--mirai-border); border-radius: 12px; background: var(--mirai-card); color: var(--mirai-text); width: 100%; font-variant-numeric: tabular-nums; }
+.km-form .unit { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.km-form .unit span { font-weight: 500; font-size: 14px; }
+.km-form fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+.km-form legend { font-size: 14px; font-weight: 700; padding: 0; margin-bottom: 4px; }
+.km-form .row { display: grid; grid-template-columns: minmax(0, 1fr) 5.5rem; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+.km-form .row select { height: 36px; font-size: 15px; padding: 0 10px; }
+.km-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.km-presets .km-btn { font-size: 12px; padding: 2px 12px; white-space: nowrap; }
+.km-presets .lbl { width: 100%; font-size: 12px; font-weight: 700; color: var(--mirai-text-muted); }
+.km-zres .total { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; padding-bottom: 12px; border-bottom: 1px solid #ececec; }
+.km-zres .total .k { font-size: 15px; font-weight: 700; }
+.km-zres .total .v { font-size: 40px; font-weight: 700; line-height: 1.2; color: var(--mirai-primary-accent); font-variant-numeric: tabular-nums; }
+.km-zres .total .v small { font-size: 16px; margin-left: 2px; }
+.km-zres .sub { font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); margin: 8px 0 0; }
+.km-zres h3 { font-size: 15px; font-weight: 700; margin: 20px 0 4px; }
+.km-zbar { list-style: none; margin: 0; padding: 0; }
+.km-zbar li { padding: 8px 0; }
+.km-zbar .line { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 8px; }
+.km-zbar .n { font-size: 16px; font-weight: 700; }
+.km-zbar .n small { font-size: 12px; font-weight: 500; color: var(--mirai-text-muted); margin-left: 8px; }
+.km-zbar .a { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.km-zbar .a small { font-size: 12px; margin-left: 1px; }
+.km-zbar .track { height: 8px; border-radius: 999px; background: #eef0f2; margin-top: 6px; overflow: hidden; }
+.km-zbar .fill { height: 100%; border-radius: 999px; background: var(--mirai-primary); }
+.km-zbar .monthly { font-size: 12px; font-weight: 500; color: var(--mirai-text-muted); }
+.km-zrest { font-size: 13px; font-weight: 500; color: var(--mirai-text-muted); margin: 8px 0 0; }
+.km-zsteps { font-size: 13px; line-height: 1.8; margin: 8px 0 0; }
+.km-zsteps summary { cursor: pointer; font-weight: 700; }
+.km-zsteps table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.km-zsteps td { padding: 4px 0; border-bottom: 1px solid #ececec; }
+.km-zsteps td:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .km-subtabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 4px 16px; }
 .km-subtab { font: inherit; font-size: 13px; font-weight: 700; background: var(--mirai-card); color: var(--mirai-text); border: 1px solid var(--mirai-border); border-radius: 999px; padding: 4px 16px; cursor: pointer; transition: background-color .2s, border-color .2s; }
 .km-subtab:hover { background: var(--mirai-surface); }
@@ -233,6 +272,7 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
       <span class="km-brand">まるっと予算ナビ@小諸 <span class="km-badge">β版</span></span>
       <nav class="km-tabs" role="tablist" aria-label="ページ切り替え">
     <button class="km-tab" role="tab" type="button" data-tab="flow" data-mode="komoro" aria-selected="true">小諸の予算</button>
+    <button class="km-tab" role="tab" type="button" data-tab="zeikin" data-mode="zeikin" aria-selected="false">わたしの税金</button>
     <button class="km-tab" role="tab" type="button" data-tab="kinrin" data-mode="kinrin" aria-selected="false">近隣と比べる</button>
     <button class="km-tab" role="tab" type="button" data-tab="ruiji" data-mode="ruiji" aria-selected="false">似た市と比べる</button>
     <button class="km-tab" role="tab" type="button" data-tab="about" data-mode="about" aria-selected="false">説明と出典</button>
@@ -320,7 +360,17 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
     </div>
   </section>
 
-  <section id="kinrin" data-section="kinrin" hidden>
+  <section id="zeikin" data-section="zeikin" hidden>
+    <div class="km-head">
+      <h1>わたしの市民税、何に使われている？</h1>
+      <p class="km-meta">小諸市「令和8年度一般会計当初予算書」と、小諸市の市・県民税の計算方法から作成</p>
+      <p class="km-lead">給与の年収と家族の状況を入れると、小諸市に納める市民税（個人市民税）のおおよその額と、それが予算の何に使われるかの目安が出ます。</p>
+      <div class="km-disclaimer"><strong>目安です</strong>　給与収入だけの人を想定した概算です。実際の税額は、医療費控除・住宅ローン控除・ほかの所得などで変わります。正確な税額は、毎年6月ごろに届く税額決定通知書でご確認ください。入力した数字はこのページの中だけで計算し、どこにも送信しません。</div>
+    </div>
+    <div class="km-zei" data-draw="zeikin" data-source="exp_kan">—</div>
+  </section>
+  
+<section id="kinrin" data-section="kinrin" hidden>
     <div class="km-head">
       <h1>近隣の市町と比べる</h1>
       <p class="km-meta">総務省「市町村別決算状況調」令和2〜6年度（決算・普通会計）から作成</p>
@@ -339,7 +389,7 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
   </section>
   <section id="about" data-section="about" class="km-about" hidden>
     <h2>このページについて</h2>
-    <p>小諸市の令和8年度一般会計当初予算が、どこから入り、何に使われるのかを一枚の図で見られるようにしたものです。あわせて、近隣の市町や、全国の似た市と決算を比べられるようにしました。数字はすべて小諸市と総務省が公開している資料から取っています。<strong>小諸市の公式サイトではなく、市・市議会・政党などの公式な資料でもありません。</strong></p>
+    <p>小諸市の令和8年度一般会計当初予算が、どこから入り、何に使われるのかを一枚の図で見られるようにしたものです。あわせて、自分の市民税の使い道の目安や、近隣の市町・全国の似た市との決算の比較も見られるようにしました。数字はすべて小諸市と総務省が公開している資料から取っています。<strong>小諸市の公式サイトではなく、市・市議会・政党などの公式な資料でもありません。</strong></p>
     <p>作成：山田ゆうじ（小諸市在住）。数字の誤りに気づいたら、<a href="https://github.com/thunder-19900512/komoro-budget/issues" target="_blank" rel="noopener">GitHubのIssues</a>でお知らせください。</p>
 
     <h2>図の読み方</h2>
@@ -361,6 +411,16 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
       <li>特別会計（国民健康保険・介護保険など）と公営企業会計（水道・下水道）は含んでいません。</li>
     </ul>
 
+    <h2>「わたしの税金」について</h2>
+    <ul>
+      <li>給与収入だけの人を想定して、令和8年度の市民税（個人市民税）を概算しています。計算は、小諸市のページ「市・県民税（個人住民税）額の計算方法」と「令和8年度から適用される主な税制改正」に沿っています。</li>
+      <li>市民税＝（課税所得×6％－調整控除の市民税分）＋均等割3,000円。百円未満は切り捨て。給与所得控除は令和8年度の改正後（190万円以下は65万円）、扶養の所得要件は58万円以下で計算しています。</li>
+      <li>所得控除は、社会保険料（空欄なら年収の15％で概算）、入力した「そのほかの所得控除」、基礎控除、配偶者控除、扶養控除だけを入れています。配偶者特別控除、特定親族特別控除、ひとり親控除、障害者控除、医療費控除、住宅ローン控除、ふるさと納税などの寄附金控除は入れていません。</li>
+      <li>税がかからない基準（所得割・均等割の非課税）は、小諸市のページ「市民税・県民税（個人住民税）について」の令和8年度の基準で判定しています。</li>
+      <li>使い道は、市民税を令和8年度一般会計当初予算の款ごとの一般財源の割合で分けた目安です。市民税は一般財源の一部で、特定の事業にひも付いているわけではありません。</li>
+      <li>入力した数字は、ブラウザの中だけで計算します。どこにも送信・保存しません。</li>
+      <li>この機能は、「まるわかり 佐久市予算」の「わたしの税金」を参考にしました。</li>
+    </ul>
     <h2>「近隣と比べる」「似た市と比べる」について</h2>
     <ul>
       <li>数字はすべて、総務省「市町村別決算状況調」（令和2〜6年度）から取りました。予算（計画）ではなく、実際に使った額（決算）です。会計の範囲は「普通会計」（一般会計に一部の特別会計を合わせ、全国で比べられるように組み直したもの）で、「小諸の予算」タブの一般会計とは範囲が少し違います。</li>
@@ -375,6 +435,7 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
       <li><a href="https://www.city.komoro.lg.jp/soshikikarasagasu/somubu/zaiseika/3/2/3/17447.html" target="_blank" rel="noopener">令和8年度当初予算（小諸市 総務部 財政課）</a> — 令和8年度一般会計当初予算書（PDF）</li>
       <li><a href="https://www.city.komoro.lg.jp/official/shisei_machizukuri/gyoseijoho/tokeichosa/4819.html" target="_blank" rel="noopener">小諸市の人口（詳細）（小諸市 市民課）</a> — 区別世帯人口表</li>
       <li><a href="https://www.city.komoro.lg.jp/soshikikarasagasu/gikaijimukyoku/shisei_machizukuri/2/7/gianR07_1/17254.html" target="_blank" rel="noopener">令和8年3月定例会 提出議案等一覧（小諸市議会）</a></li>
+      <li><a href="https://www.city.komoro.lg.jp/official/kurashi_tetsuzuki/zeikin/kojinshiminzei/3616.html" target="_blank" rel="noopener">市・県民税（個人住民税）額の計算方法（小諸市）</a>／<a href="https://www.city.komoro.lg.jp/official/kurashi_tetsuzuki/zeikin/kojinshiminzei/14171.html" target="_blank" rel="noopener">令和8年度から適用される主な税制改正（小諸市）</a>／<a href="https://www.city.komoro.lg.jp/official/kurashi_tetsuzuki/zeikin/kojinshiminzei/16761.html" target="_blank" rel="noopener">市民税・県民税（個人住民税）について（小諸市）</a> — 「わたしの税金」の計算</li>
       <li><a href="https://www.soumu.go.jp/iken/kessan_jokyo_2.html" target="_blank" rel="noopener">市町村別決算状況調（総務省）</a> — 令和2〜6年度の都市別・町村別（概況・歳入・目的別歳出・性質別歳出・地方債現在高等）</li>
       <li><a href="https://www.soumu.go.jp/iken/ruiji/ruijiR06.html" target="_blank" rel="noopener">令和6年度 類似団体別市町村財政指数表（総務省）</a> — 類似団体区分と、平均の計算に使った団体</li>
       <li><a href="https://www.soumu.go.jp/menu_news/s-news/01gyosei02_02000389.html" target="_blank" rel="noopener">住民基本台帳に基づく人口、人口動態及び世帯数（令和7年1月1日現在）（総務省）</a> — 年齢階級別人口</li>
@@ -436,7 +497,7 @@ km.showTab = (name) => {
 };
 document.querySelectorAll('.km-tab, .km-subtab').forEach((t) => t.addEventListener('click', () => { km.showTab(t.dataset.tab); dash.setLink(t.dataset.tab); window.scrollTo({top: 0}); }));
 const named = location.hash.slice(1);
-if (['flow', 'change', 'jigyo', 'kinrin', 'ruiji', 'about'].includes(named)) km.showTab(named);
+if (['flow', 'change', 'jigyo', 'zeikin', 'kinrin', 'ruiji', 'about'].includes(named)) km.showTab(named);
 document.querySelectorAll('.km-reset').forEach((b) => b.addEventListener('click', () => { km.sel = null; dash.draw('sankey'); dash.draw('panel'); }));
 document.querySelectorAll('.km-q').forEach((q) => q.addEventListener('input', () => { km.pQ = q.value.trim(); dash.draw('ptable'); dash.draw('pcount'); }));
 document.querySelectorAll('.km-table th button').forEach((b) => b.addEventListener('click', () => {
@@ -931,6 +992,171 @@ function render(el, mode) {
 
 dash.draw('cmp-kinrin', (el) => render(el, 'kinrin'));
 dash.draw('cmp-ruiji', (el) => render(el, 'ruiji'));
+}</script>
+<script>{
+/* わたしの税金：給与収入から市民税（個人市民税）を概算し、令和8年度当初予算の一般財源の配分で按分する。
+   計算は小諸市「市・県民税（個人住民税）額の計算方法」「令和8年度から適用される主な税制改正」「個人住民税について」に沿う。 */
+const km = window.km;
+const DESC = {
+  '民生費': '福祉・子育て・高齢者', '総務費': '市役所の運営・税・戸籍・選挙', '衛生費': '健診・ごみ処理・環境',
+  '教育費': '学校・給食・図書館・公民館', '公債費': '借金の返済', '土木費': '道路・公園・住宅',
+  '消防費': '消防・防災', '商工費': '商工業・観光', '農林水産業費': '農業・林業', '議会費': '市議会',
+};
+const MAIN = ['民生費', '総務費', '教育費', '公債費', '土木費', '衛生費', '消防費', '商工費', '農林水産業費', '議会費'];
+const floorTo = (v, u) => Math.floor(v / u) * u;
+const yen = (v) => Math.round(v).toLocaleString('ja-JP');
+
+// 給与所得（令和8年度＝令和7年分の収入。190万円以下は最低保障65万円）
+function kyuyoShotoku(s) {
+  if (s <= 1900000) return Math.max(0, s - 650000);
+  if (s < 6600000) { const a = floorTo(s / 4, 1000); return s <= 3600000 ? a * 2.8 - 80000 : a * 3.2 - 440000; }
+  if (s <= 8500000) return Math.floor(s * 0.9 - 1100000);
+  return s - 1950000;
+}
+
+function calc(i) {
+  const shotoku = kyuyoShotoku(i.income);
+  const steps = [['給与所得', shotoku]];
+  // 所得控除（市民税・県民税）
+  const kiso = shotoku <= 24000000 ? 430000 : shotoku <= 24500000 ? 290000 : shotoku <= 25000000 ? 150000 : 0;
+  let haigu = 0, haiguDiff = 0;
+  if (i.spouse !== 'none') {
+    const old = i.spouse === 'old';
+    if (shotoku <= 9000000) { haigu = old ? 380000 : 330000; haiguDiff = old ? 100000 : 50000; }
+    else if (shotoku <= 9500000) { haigu = old ? 260000 : 220000; haiguDiff = old ? 60000 : 40000; }
+    else if (shotoku <= 10000000) { haigu = old ? 130000 : 110000; haiguDiff = old ? 30000 : 20000; }
+  }
+  const fuyo = i.ippan * 330000 + i.tokutei * 450000 + i.rojin * 380000 + i.doukyo * 450000;
+  const fuyoDiff = i.ippan * 50000 + i.tokutei * 180000 + i.rojin * 100000 + i.doukyo * 130000;
+  const kojo = i.shaho + i.other + kiso + haigu + fuyo;
+  steps.push(['社会保険料控除', -i.shaho]);
+  if (i.other) steps.push(['そのほかの所得控除', -i.other]);
+  steps.push(['基礎控除', -kiso]);
+  if (haigu) steps.push(['配偶者控除', -haigu]);
+  if (fuyo) steps.push(['扶養控除', -fuyo]);
+  const kazei = Math.max(0, floorTo(shotoku - kojo, 1000));
+  steps.push(['課税所得（千円未満切り捨て）', kazei]);
+  // 所得割（市民税6％）と調整控除（市民税分3％）
+  let wari = kazei * 0.06;
+  steps.push(['所得割（課税所得×6％）', Math.floor(wari)]);
+  const diff = 50000 + haiguDiff + fuyoDiff;
+  let chosei = 0;
+  if (kazei > 0 && shotoku <= 25000000) {
+    chosei = kazei <= 2000000 ? Math.min(diff, kazei) * 0.03 : Math.max((diff - (kazei - 2000000)) * 0.03, 1500);
+  }
+  if (chosei) steps.push(['調整控除（市民税分）', -Math.floor(chosei)]);
+  wari = Math.max(0, Math.floor(wari - chosei));
+  // 非課税の判定（扶養の人数には16歳未満も含む）
+  const n = (i.spouse !== 'none' ? 1 : 0) + i.young + i.ippan + i.tokutei + i.rojin + i.doukyo;
+  const noWari = shotoku <= 350000 * (1 + n) + 100000 + (n ? 320000 : 0);
+  const noKinto = shotoku <= 280000 * (1 + n) + 100000 + (n ? 168000 : 0);
+  if (noWari) wari = 0;
+  const kinto = noKinto ? 0 : 3000;
+  steps.push(['所得割（調整控除後）', wari]);
+  steps.push(['均等割', kinto]);
+  const total = floorTo(wari + kinto, 100);
+  return {total, wari, kinto, noWari, noKinto, steps};
+}
+
+const PRESETS = [
+  ['300万円・単身', {income: 300, spouse: 'none', young: 0, ippan: 0, tokutei: 0, rojin: 0, doukyo: 0}],
+  ['400万円・単身', {income: 400, spouse: 'none', young: 0, ippan: 0, tokutei: 0, rojin: 0, doukyo: 0}],
+  ['500万円・配偶者と小学生2人', {income: 500, spouse: 'yes', young: 2, ippan: 0, tokutei: 0, rojin: 0, doukyo: 0}],
+  ['700万円・配偶者と高校生・大学生', {income: 700, spouse: 'yes', young: 0, ippan: 1, tokutei: 1, rojin: 0, doukyo: 0}],
+];
+const st = {income: 400, shaho: null, other: 0, spouse: 'none', young: 0, ippan: 0, tokutei: 0, rojin: 0, doukyo: 0};
+
+function form(onChange) {
+  const f = km.mk('form', 'km-card km-form');
+  f.addEventListener('submit', (e) => e.preventDefault());
+  f.append(km.mk('h2', null, '条件を入れる'));
+  const pre = km.mk('div', 'km-presets');
+  pre.append(km.mk('span', 'lbl', '例から選ぶ（年収）'));
+  PRESETS.forEach(([t, v]) => { const b = km.mk('button', 'km-btn', t); b.type = 'button'; b.addEventListener('click', () => { Object.assign(st, v, {shaho: null, other: 0}); onChange(true); }); pre.append(b); });
+  f.append(pre);
+  const num = (label, key, unit, hint, ph) => {
+    const l = km.mk('label', null, label);
+    const w = km.mk('div', 'unit');
+    const inp = km.mk('input'); inp.type = 'number'; inp.inputMode = 'decimal'; inp.min = '0'; inp.step = 'any'; inp.dataset.key = key;
+    if (ph) inp.placeholder = ph;
+    const v = st[key]; inp.value = v == null ? '' : v;
+    inp.addEventListener('input', () => { const x = inp.value === '' ? null : Number(inp.value); st[key] = key === 'income' ? (x || 0) : x; onChange(false); });
+    w.append(inp, km.mk('span', null, unit)); l.append(w);
+    if (hint) l.append(km.mk('span', 'hint', hint));
+    return l;
+  };
+  f.append(num('給与の年収（税込み・額面）', 'income', '万円', '令和7年1〜12月の給与の合計。源泉徴収票の「支払金額」。'));
+  f.append(num('社会保険料', 'shaho', '万円', '空欄なら年収の15％で概算。源泉徴収票の「社会保険料等の金額」を入れると正確になります。', '自動'));
+  f.append(num('そのほかの所得控除', 'other', '万円', '生命保険料控除・地震保険料控除など（住民税の額）。わからなければ0。'));
+  const sp = km.mk('label', null, '配偶者');
+  const sel = km.mk('select'); [['none', 'いない／収入がある（123万円超）'], ['yes', 'いる・収入が少ない（70歳未満）'], ['old', 'いる・収入が少ない（70歳以上）']].forEach(([v, t]) => { const o = km.mk('option', null, t); o.value = v; sel.append(o); });
+  sel.value = st.spouse; sel.addEventListener('change', () => { st.spouse = sel.value; onChange(false); });
+  sp.append(sel, km.mk('span', 'hint', '配偶者控除の対象（令和7年の給与収入123万円以下）かどうか。'));
+  f.append(sp);
+  const fs = km.mk('fieldset'); fs.append(km.mk('legend', null, '扶養している家族（収入が少ない人）'));
+  [['young', '16歳未満の子'], ['ippan', '16〜18歳、23〜69歳'], ['tokutei', '19〜22歳'], ['doukyo', '70歳以上・同居の親'], ['rojin', '70歳以上・それ以外']].forEach(([k, t]) => {
+    const r = km.mk('label', 'row'); r.append(km.mk('span', null, t));
+    const s = km.mk('select'); for (let n = 0; n <= 6; n++) { const o = km.mk('option', null, n + '人'); o.value = n; s.append(o); }
+    s.value = st[k]; s.addEventListener('change', () => { st[k] = Number(s.value); onChange(false); });
+    r.append(s); fs.append(r);
+  });
+  fs.append(km.mk('span', 'hint', '年齢は令和7年12月31日時点。16歳未満の子は控除がありませんが、税がかかるかどうかの判定に使います。'));
+  f.append(fs);
+  return f;
+}
+
+function result(box, kan) {
+  box.textContent = '';
+  const inc = Math.round(st.income * 10000);
+  const shaho = st.shaho == null ? Math.round(inc * 0.15) : Math.round(st.shaho * 10000);
+  const r = calc({income: inc, shaho, other: Math.round((st.other || 0) * 10000), spouse: st.spouse, young: st.young, ippan: st.ippan, tokutei: st.tokutei, rojin: st.rojin, doukyo: st.doukyo});
+  const top = km.mk('div', 'total');
+  top.append(km.mk('div', 'k', '小諸市に納める市民税（年額の目安）'));
+  const v = km.mk('div', 'v', yen(r.total)); v.append(km.mk('small', null, '円')); top.append(v);
+  box.append(top);
+  let sub = `月あたり約${yen(r.total / 12)}円。`;
+  if (r.noKinto) sub += 'この条件では、市民税はかからない見込みです。';
+  else if (r.noWari) sub += 'この条件では、所得割はかからず、均等割だけの見込みです。';
+  sub += ' 県民税と森林環境税（国の税）は、別にかかります（この計算には入れていません）。';
+  box.append(km.mk('p', 'sub', sub));
+  if (r.total > 0) {
+    box.append(km.mk('h3', null, 'そのうち…'));
+    const ippanTotal = kan.reduce((a, k) => a + k.ippan, 0);
+    const rows = MAIN.map((n) => { const k = kan.find((x) => x.kan === n); return {n, a: k ? r.total * k.ippan / ippanTotal : 0}; }).sort((a, b) => b.a - a.a);
+    const show = rows.slice(0, 7), rest = rows.slice(7);
+    const restAmt = r.total - show.reduce((a, x) => a + Math.round(x.a / 100) * 100, 0);
+    const max = show[0].a;
+    const ul = km.mk('ul', 'km-zbar');
+    show.forEach((x) => {
+      const li = km.mk('li'); const line = km.mk('div', 'line');
+      const n = km.mk('span', 'n', x.n); n.append(km.mk('small', null, DESC[x.n] || '')); line.append(n);
+      const a = km.mk('span', 'a', yen(Math.round(x.a / 100) * 100)); a.append(km.mk('small', null, '円')); line.append(a);
+      li.append(line);
+      const tr = km.mk('div', 'track'); const fl = km.mk('div', 'fill'); fl.style.width = (x.a / max * 100).toFixed(1) + '%'; tr.append(fl); li.append(tr);
+      ul.append(li);
+    });
+    box.append(ul);
+    box.append(km.mk('p', 'km-zrest', `ほか ${rest.map((x) => x.n.replace('費', '')).join('・')}・労働・予備費など ${yen(Math.max(0, restAmt))}円`));
+  }
+  const det = km.mk('details', 'km-zsteps');
+  det.append(km.mk('summary', null, '計算の内訳を見る'));
+  const tb = km.mk('table');
+  r.steps.forEach(([t, a]) => { const tr = km.mk('tr'); tr.append(km.mk('td', null, t), km.mk('td', null, (a < 0 ? '−' : '') + yen(Math.abs(a)) + '円')); tb.append(tr); });
+  const tr = km.mk('tr'); tr.append(km.mk('td', null, '市民税（百円未満切り捨て）'), km.mk('td', null, yen(r.total) + '円')); tb.append(tr);
+  det.append(tb);
+  det.append(km.mk('p', 'km-note', `社会保険料は${st.shaho == null ? '年収の15％で概算した' : '入力した'} ${yen(shaho)}円で計算。給与所得は、令和8年度の改正後の給与所得控除（190万円以下は65万円）で計算しています。`));
+  box.append(det);
+  box.append(km.mk('p', 'km-note', '使い道は、市民税を令和8年度一般会計当初予算の「一般財源（使い道が決まっていないお金）」の款ごとの配分の割合で分けた目安です。市民税は一般財源の一部で、特定の事業にひも付いているわけではありません。'));
+}
+
+dash.draw('zeikin', (el) => {
+  const kan = dash.data('exp_kan').data;
+  el.textContent = '';
+  const res = km.mk('div', 'km-card km-zres');
+  const redraw = (full) => { if (full) dash.draw('zeikin'); else result(res, kan); };
+  el.append(form(redraw), res);
+  result(res, kan);
+});
 }</script>
 <footer class="km-foot"><div>このページは小諸市の公式サイトではありません。数字の出典は小諸市「令和8年度一般会計当初予算書」、総務省「市町村別決算状況調」ほか（「説明と出典」タブ参照）。データとソース：<a href="https://github.com/thunder-19900512/komoro-budget" target="_blank" rel="noopener">github.com/thunder-19900512/komoro-budget</a></div></footer>
 </div>
