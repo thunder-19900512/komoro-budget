@@ -156,6 +156,9 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
 @media (max-width: 40rem) { .km-table .hide-narrow { display: none; } }
 #jigyo .km-table td:first-child { min-width: 10em; }
 #jigyo .km-table td:nth-child(2) { white-space: nowrap; }
+#jigyo .km-pnote { display: block; margin-top: 6px; font-size: 12px; line-height: 1.7; color: var(--mirai-text-muted); font-weight: 500; max-width: 34em; }
+#jigyo .km-pnote a { color: inherit; text-decoration: underline; }
+#jigyo .km-pnote b { color: var(--mirai-text); font-weight: 700; }
 
 .km-about { max-width: 48rem; }
 .km-about h2 { margin-top: 28px; }
@@ -348,7 +351,8 @@ body { margin: 0; min-height: 100vh; background: var(--mirai-bg-dashboard); colo
     <div class="km-card">
       <h2>予算書に載っている事業の一覧</h2>
       <p class="km-note">予算書の説明欄で「◎」の付いた事業（人件費のまとまりを含む）です。すべて足すと一般会計の総額と一致します。金額の大きい順。</p>
-      <p class="km-note">「R7当初」は令和7年度の当初予算、「R7決算」は令和7年度に実際に使った額（令和7年度成果説明書の事業費）、「当初比」はR7決算をR7当初で割ったものです。年度の途中の補正予算や、翌年度への繰り越しで大きく変わるため、当初比が低いことだけで「使い残し」とは決まりません。同じ名前の事業が見つからないものは「—」です。</p>
+      <p class="km-note">「R7当初」は令和7年度の当初予算、「R7決算」は令和7年度に実際に使った額（令和7年度成果説明書の事業費）、「当初比」はR7決算をR7当初で割ったものです。同じ名前の事業が見つからないものは「—」です。</p>
+      <p class="km-note">当初比は「執行率」ではありません。当初予算と決算の差には、次の3つが混ざっています。①年度の途中の<b>減額補正</b>（国の補助が想定より少ない、申し込みが少ないなどで、予算そのものを減らす）、②翌年度への<b>繰り越し</b>（工事や手続きが年度内に終わらず、予算を次の年度に回して使う）、③本当に使わなかった<b>不用額</b>。執行率は、補正と繰り越しを反映した「予算現額」で割るのが本来ですが、事業ごとの予算現額は公開資料に出ていないため、ここでは当初予算で割っています。理由がわかった事業には、事業名の下に注記を付けました。</p>
       <div class="km-ptools">
         <input type="search" class="km-q" placeholder="事業名で探す（例：学校、保育、除雪）" aria-label="事業名で探す">
         <select class="dash-select km-kansel" data-draw="kansel" data-source="exp_kan" aria-label="款で絞り込む"></select>
@@ -794,6 +798,22 @@ dash.draw('pcount', (el) => {
   const f = km.filtered(d.data);
   el.textContent = f.length + '件・合計 ' + km.yen(d3.sum(f, (p) => Number(p.amount)));
 });
+/* 当初比が大きく外れる事業のうち、理由が公開資料でわかったもの */
+const PNOTES = {
+  '脱炭素先行地域づくり事業': [
+    {b: 'R7の当初比が低い理由：'},
+    '令和8年3月の補正予算（令和7年度一般会計補正予算 第11号）で、「事業実績の見込みによる減」として減額し、あわせて翌年度への繰り越しを設定しています。繰り越しの理由は「補助金の制度設計について環境省との協議に不測の時間を要したため」と説明されています（',
+    {t: '令和8年3月定例会 2月17日 総務部長の提案説明', u: 'https://ssp.kaigiroku.net/tenant/komoro/MinuteView.html?council_id=142&schedule_id=2&minute_id=74'},
+    '）。当初の20.6億円と決算の0.7億円の差には、この減額と繰り越しが含まれています。それぞれの金額は、公開資料では確認できていません。',
+    ' 事業費の大半は国の交付金（原則3分の2）で、R7決算6,869万円のうち6,499万円が国・県の支出金です（',
+    {t: '令和7年度成果説明書 72ページ', u: 'https://www.city.komoro.lg.jp/material/files/group/3/r7seikasetumei.pdf#page=72'},
+    '）。進み具合は、目標とする電力需要14.6GWhのうち再エネ供給が約1.46GWh（達成率10％、令和7年度末見込み）、公用車のEV化は目標累計60台（令和6年度まで）に対し10台、戸建住宅の断熱（ZEH）改修は計画50戸に対し2戸（成果説明書）です（',
+    {t: '令和8年3月定例会 2月25日 市民生活部長答弁', u: 'https://ssp.kaigiroku.net/tenant/komoro/MinuteView.html?council_id=142&schedule_id=3&minute_id=239'},
+    '／',
+    {t: '環境省 中間評価報告票', u: 'https://policies.env.go.jp/policy/roadmap/assets/preceding-region/tyubu-R7-tyukanhyoka-hokokusyo-02.pdf'},
+    '）。',
+  ],
+};
 dash.draw('ptable', (tb) => {
   const d = dash.data('projects');
   tb.replaceChildren();
@@ -814,7 +834,14 @@ dash.draw('ptable', (tb) => {
     const tr = document.createElement('tr');
     tr.dataset.key = p.id;
     const td = (text, cls) => { const c = km.mk('td', cls, text); tr.append(c); return c; };
-    td(p.name); td(p.kan); td(p.kou, 'hide-narrow');
+    const nm = td(p.name);
+    const note = PNOTES[p.name];
+    if (note) {
+      const s = km.mk('span', 'km-pnote');
+      note.forEach((x) => { if (typeof x === 'string') s.append(x); else if (x.b) s.append(km.mk('b', null, x.b)); else { const a = km.mk('a', null, x.t); a.href = x.u; a.target = '_blank'; a.rel = 'noopener'; s.append(a); } });
+      nm.append(s);
+    }
+    td(p.kan); td(p.kou, 'hide-narrow');
     const a = td(Number(p.amount).toLocaleString('ja-JP'), 'num');
     const bar = km.mk('div', 'cb'); bar.style.width = Math.max(2, Math.sqrt(p.amount / top) * 100) + '%'; a.append(bar);
     td(n(p.r7_budget), 'num hide-narrow');
